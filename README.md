@@ -7,7 +7,7 @@ with a *single* guest component binary running unchanged against very
 different stacks:
 
 - a **native Rust** host ([Wasmtime] + [`webrtc-rs`]),
-- a **runtime-linked JS** host ([`deltic`] on stock Deno — and inside a real
+- a **runtime-linked JS** host ([`polyengine`] on stock Deno — and inside a real
   browser — backed by [`node-datachannel`] or the native `RTCPeerConnection`;
   no transpile step, no engine flag), and
 - an **in-guest** component ([`wasip3-impl`](wasip3-impl)) that runs the whole
@@ -20,7 +20,15 @@ they behave compatibly.
 [`node-datachannel`]: https://github.com/murat-dogan/node-datachannel
 [Wasmtime]: https://github.com/bytecodealliance/wasmtime
 [`webrtc-rs`]: https://github.com/webrtc-rs/webrtc
-[`deltic`]: https://github.com/lann/deltic
+[`polyengine`]: https://github.com/polymorph-components/polyengine
+
+## Releases
+
+Everything here is **unstable** (0.x), but [releases](../../releases) are
+**caret-honest**: within a minor line they stay backward-compatible, and
+anything breaking bumps the minor. Consumption is pinned at a release's
+commit — cargo git dependencies, vendored WIT, the release-pinned
+polyengine/JSR graph — and bumped deliberately.
 
 ## What's here
 
@@ -29,12 +37,12 @@ they behave compatibly.
 | [`wit/`](wit) | The streaming **WIT interface**, the `polymorph:webrtc-datachannels@0.1.0` package. Each demo component keeps its own demo-only WIT and symlinks this package in as a dependency. |
 | [`examples/echo-demo`](examples/echo-demo) | A **Rust example component** exercising a data channel one message at a time. |
 | [`wasmtime-impl`](wasmtime-impl) | The **Wasmtime host crate** (webrtc-rs), modeled after `wasmtime_wasi_http::p3`. Provides `add_to_linker` + `WebrtcView` for the `types` interface and the `data-channel` resource of `connections` (the `peer-connection` resource is unimplemented). Crate name: `wasmtime-webrtc-datachannels`. |
-| [`deltic-impl`](deltic-impl) | The **runtime-linked JS host module** ([deltic](https://github.com/lann/deltic) on stock Deno or in the browser, node-datachannel/RTCPeerConnection-backed): the browser-first reference host (`jco-impl/webrtc.js`, retired with the jco legs — see git history) ported to deltic's embedder conventions, upstreamed from deltic's `ports/webrtc`. |
+| [`polyengine-impl`](polyengine-impl) | The **runtime-linked JS host module** ([polyengine](https://github.com/polymorph-components/polyengine) on stock Deno or in the browser, node-datachannel/RTCPeerConnection-backed): the browser-first reference host (`jco-impl/webrtc.js`, retired with the jco legs — see git history) ported to polyengine's embedder conventions, upstreamed from polyengine's `ports/webrtc`. |
 | [`examples/wasmtime-demo`](examples/wasmtime-demo) | The **native Rust host** (Wasmtime + webrtc-rs): demo binaries built on `wasmtime-impl`. |
 | [`examples/cli-signaling`](examples/cli-signaling) | The **manual-signaling CLI guest component** (Rust), driving `connections.peer-connection` with guest-side vanilla ICE. |
 | [`examples/webrtc-consumer`](examples/webrtc-consumer) | A **minimal consumer component** that imports `connections`. Composed (`wac plug`) with `wasip3-impl` for the in-guest round-trip integration test (`just examples::test-webrtc-composed`). |
 | [`wasip3-impl`](wasip3-impl) | The **third implementation**: a wasm **component** (built for `wasm32-wasip2`) that runs the sans-I/O `rtc` 0.21 WebRTC stack *in-guest* — importing only `wasi:sockets`/`wasi:clocks` — and **exports** `polymorph:webrtc-datachannels/connections`. Its `SansIoPeer` core is driven over `wasi:sockets` UDP and WASI timers by an in-guest runtime pump. Composable via `wac plug`. Crate name: `wasip3-webrtc-datachannels`. |
-| [`conformance/`](conformance) | The **cross-implementation conformance suite**, on the [`polymorph:test`](https://github.com/polymorph-components/polymorph-test) harness: two suite components (full and pair-only) run against every target (wasmtime, the composed wasip3 stack, deltic under stock Deno and inside headless Chromium), an interop matrix pairing every implementation with a non-wasm reference peer (Google's libwebrtc via LiveKit's Rust bindings), a netns lab, and a Shadow lab. `just conformance`; see [`conformance/README.md`](conformance/README.md). |
+| [`conformance/`](conformance) | The **cross-implementation conformance suite**, on the [`polymorph:test`](https://github.com/polymorph-components/polymorph-test) harness: two suite components (full and pair-only) run against every target (wasmtime, the composed wasip3 stack, polyengine under stock Deno and inside headless Chromium), an interop matrix pairing every implementation with a non-wasm reference peer (Google's libwebrtc via LiveKit's Rust bindings), a netns lab, and a Shadow lab. `just conformance`; see [`conformance/README.md`](conformance/README.md). |
 | [`AGENTS.md`](AGENTS.md) | Orientation for agents/contributors, linking the `lann/wasm-component-starter` knowledge base. |
 
 ## The interface
@@ -123,22 +131,22 @@ world webrtc-echo-demo {
 ## Running it
 
 Prerequisites: Rust (with the `wasm32-unknown-unknown` target),
-[`wasm-tools`], Deno 2.x (the deltic host), and Node 24+ (the deltic
+[`wasm-tools`], Deno 2.x (the polyengine host), and Node 24+ (the polyengine
 browser drivers — plain `node`, no engine flag).
 
 [`wasm-tools`]: https://github.com/bytecodealliance/wasm-tools
 
-### deltic (runtime-linked JS) host
+### polyengine (runtime-linked JS) host
 
 The conformance legs are the maintained entry points — the component is
 runtime-linked at load time, so there is nothing to transpile or stage:
 
 ```sh
-just conformance::run-deltic           # the full suite under stock Deno
-just conformance::run-deltic-browser   # the same suite inside headless Chromium
+just conformance::run-polyengine           # the full suite under stock Deno
+just conformance::run-polyengine-browser   # the same suite inside headless Chromium
 ```
 
-The host module (`deltic-impl/src/webrtc.ts`) is environment-portable: it
+The host module (`polyengine-impl/src/webrtc.ts`) is environment-portable: it
 resolves `RTCPeerConnection` from the browser global when present and falls
 back to `node-datachannel` under Deno.
 

@@ -28,9 +28,9 @@
 #     `shadow-dev` GitHub prerelease; fetch it with scripts/download-shadow.sh or
 #     build it locally with scripts/build-shadow.sh. The lab recipe prints this
 #     guidance and fails if the binary is missing when it runs.
-#   - the deltic legs' runtime dependencies are NOT installed here: their just
+#   - the polyengine legs' runtime dependencies are NOT installed here: their just
 #     recipes materialize the pinned module graph and npm tree on first run
-#     (conformance::deltic-deps and the _deltic-browser-* recipes)
+#     (conformance::polyengine-deps and the _polyengine-browser-* recipes)
 #
 # wasm-tools, just, and cargo-nextest are installed with cargo-binstall, which
 # downloads the pinned prebuilt release binaries when available and automatically
@@ -38,7 +38,7 @@
 # itself is bootstrapped from its prebuilt release binary.
 #
 # Prerequisites (not installed here): a Rust toolchain via rustup, Node 22+
-# with npm (the deltic browser drivers), and Deno 2.x (the deltic legs). CI
+# with npm (the polyengine browser drivers), and Deno 2.x (the polyengine legs). CI
 # and copilot-setup-steps provision these before calling this script; local
 # developers should install them first.
 #

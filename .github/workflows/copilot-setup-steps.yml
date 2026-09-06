@@ -36,7 +36,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          # Node 24+ for the deltic browser page drivers (plain node, no
+          # Node 24+ for the polyengine browser page drivers (plain node, no
           # engine flag).
           node-version: "24"
 

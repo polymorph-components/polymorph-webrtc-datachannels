@@ -1,0 +1,43 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@polyengine/ct-runner@0.6.3": "0.6.3",
+    "jsr:@polyengine/protocol@0.3.1": "0.3.1",
+    "jsr:@polyengine/protocol@~0.3.1": "0.3.1",
+    "jsr:@polyengine/runtime@0.6.3": "0.6.3",
+    "jsr:@polyengine/runtime@~0.6.3": "0.6.3",
+    "jsr:@polyengine/wasi@0.6.3": "0.6.3"
+  },
+  "jsr": {
+    "@polyengine/ct-runner@0.6.3": {
+      "integrity": "61821fbc7d8de1aab0a82a6ab3adfa89cc63b87c1a4573516e45a407d501027c",
+      "dependencies": [
+        "jsr:@polyengine/protocol@~0.3.1",
+        "jsr:@polyengine/runtime@~0.6.3"
+      ]
+    },
+    "@polyengine/protocol@0.3.1": {
+      "integrity": "3cba0ded857c5cc911fcf9c0782c7566c79af89ddc8e0ec4e48ece60c807a518"
+    },
+    "@polyengine/runtime@0.6.3": {
+      "integrity": "8f1ffc1c547793bc4cb3c1dec6a62c8cf0eb5cdb135b70e6df1fd042c6ec58f0",
+      "dependencies": [
+        "jsr:@polyengine/protocol@~0.3.1"
+      ]
+    },
+    "@polyengine/wasi@0.6.3": {
+      "integrity": "5c738fe95101f22e469346618e79ce261dd636a5d44e89fdcdd40c33d8c92e17",
+      "dependencies": [
+        "jsr:@polyengine/protocol@~0.3.1"
+      ]
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@polyengine/ct-runner@0.6.3",
+      "jsr:@polyengine/protocol@0.3.1",
+      "jsr:@polyengine/runtime@0.6.3",
+      "jsr:@polyengine/wasi@0.6.3"
+    ]
+  }
+}

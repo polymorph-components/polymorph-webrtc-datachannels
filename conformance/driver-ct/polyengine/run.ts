@@ -1,6 +1,6 @@
-// The deltic Deno child of rtc-ct-driver: one suite instance's stream — a
-// selection and (for pair runs) a role — against the deltic-native host
-// module (`deltic-impl/src/webrtc.ts`, backed by node-datachannel) and the
+// The polyengine Deno child of rtc-ct-driver: one suite instance's stream — a
+// selection and (for pair runs) a role — against the polyengine-native host
+// module (`polyengine-impl/src/webrtc.ts`, backed by node-datachannel) and the
 // fetch mailbox (`signaling.ts`). Emits component-test results JSONL on
 // stdout; the driver folds and merges.
 //
@@ -8,30 +8,34 @@
 // `RTC_CT_RUN_ID` always; `RTC_CT_ROLE` on pair instances;
 // `RTC_CT_CASE_TIMEOUT_SECS` bounds each case; `--select` carries the
 // case-name prefix. The suite artifact is the BARE full suite — the exact
-// component the retired jco legs transpiled — loaded directly: deltic is a runtime
+// component the retired jco legs transpiled — loaded directly: polyengine is a runtime
 // linker, so there is no transpile step, no generated tree, and no engine
 // flag; the WIT contract's async exports run on the callback ABI under
 // stock Deno.
 //
-// The translator shim arrives through `DELTIC_TRANSLATOR` (or
-// `--translator`); the `conformance::run-deltic` justfile recipe fetches the
-// sha256-pinned release asset with `fetch-translator.ts` and exports the
-// path, so the driver's child spawn needs no deltic-specific arguments.
+// The translator shim comes packaged with `@polyengine/translator` (the SAME
+// pinned commit as the rest of the polyengine graph); `defaultTranslator()`
+// loads it through the module graph, permission-free. `--translator
+// <path>` remains as an optional override (a documented interface for
+// swapping in a locally built shim), but is no longer required to run.
 //
-// MODULE-IDENTITY CONSTRAINT: deltic's wasi-shims module imports
-// `@deltic/runtime/embedder` by bare specifier internally; this leg's
-// `deno.json` AND `deltic-impl/deno.json` must map that specifier to the
-// IDENTICAL pinned URL, or the embedder module loads twice and
-// `instanceof WitError` stops holding across the module boundary.
+// MODULE-IDENTITY CONSTRAINT (A22): this leg's `deno.json` AND
+// `browser/deno.json` still load the embedder (`@polyengine/runtime/embedder`)
+// and must map it to the IDENTICAL pinned JSR version, or stateful handles
+// minted by one copy are refused by another. `polyengine-impl/deno.json` no
+// longer maps `@polyengine/runtime` at all — as of A22 it depends only on
+// `@polyengine/protocol`, whose copies are harmless by construction, so it
+// no longer participates in this constraint.
 
-import { Translator } from "@deltic/runtime/shim";
-import type { ComponentArtifacts } from "@deltic/runtime/embedder";
-import { runSuite } from "@deltic/ct-runner";
-import { wasiShims } from "@deltic/wasi-shims";
-import { setMaxInboundBufferBytes, webrtcImports } from "../../../deltic-impl/src/webrtc.ts";
+import { Translator } from "@polyengine/runtime/shim";
+import { defaultTranslator } from "@polyengine/translator";
+import type { ComponentArtifacts } from "@polyengine/runtime/embedder";
+import { runSuite } from "@polyengine/ct-runner";
+import { wasi } from "@polyengine/wasi";
+import { setMaxInboundBufferBytes, webrtcImports } from "../../../polyengine-impl/src/webrtc.ts";
 import { mailboxImports } from "./signaling.ts";
 
-// This file sits at conformance/driver-ct/deltic/run.ts, so the repo root
+// This file sits at conformance/driver-ct/polyengine/run.ts, so the repo root
 // is three levels up.
 const ROOT = new URL("../../../", import.meta.url);
 
@@ -64,7 +68,7 @@ function parseArgs(argv: string[]): Cli {
     select: "",
     suite: SUITE_WASM,
     name: "conformance-guest-ct",
-    target: "deltic-deno",
+    target: "polyengine-deno",
     jspi: false,
   };
   for (let i = 0; i < argv.length; i++) {
@@ -95,10 +99,12 @@ function parseArgs(argv: string[]): Cli {
 }
 
 async function loadArtifacts(
-  translatorPath: string,
+  translatorPath: string | undefined,
   suitePath: string,
 ): Promise<ComponentArtifacts> {
-  const translator = await Translator.create(await Deno.readFile(translatorPath));
+  const translator = translatorPath
+    ? await Translator.create(await Deno.readFile(translatorPath))
+    : await defaultTranslator();
   const componentBytes = await Deno.readFile(suitePath);
   const { plan, adapters } = translator.translate(componentBytes);
   return { plan, componentBytes, adapters };
@@ -118,16 +124,6 @@ function emitLine(line: string): void {
 async function main() {
   const cli = parseArgs(Deno.args);
 
-  const translatorPath = cli.translator ?? Deno.env.get("DELTIC_TRANSLATOR");
-  if (!translatorPath) {
-    throw new Error(
-      "no translator shim: pass --translator <path> or set DELTIC_TRANSLATOR; " +
-        "the pinned release asset is fetched by " +
-        "conformance/driver-ct/deltic/fetch-translator.ts " +
-        "(the conformance::run-deltic recipe does both).",
-    );
-  }
-
   setMaxInboundBufferBytes(MAX_INBOUND_BUFFER_BYTES);
 
   // The suite's store environment: the buffer bound always, the pair-run
@@ -144,9 +140,9 @@ async function main() {
     Deno.env.get("RTC_CT_CASE_TIMEOUT_SECS") ?? DEFAULT_CASE_TIMEOUT_SECS,
   );
 
-  const artifacts = await loadArtifacts(translatorPath, cli.suite);
+  const artifacts = await loadArtifacts(cli.translator, cli.suite);
   const imports = {
-    ...wasiShims({ cli: { env, passthrough: false } }),
+    ...wasi({ cli: { env } }),
     ...webrtcImports(),
     ...mailboxImports(),
   };

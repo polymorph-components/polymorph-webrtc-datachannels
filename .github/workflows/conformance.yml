@@ -9,7 +9,7 @@ name: Conformance
 # and cached — exactly once per run.
 #
 # The `matrix` job runs the loopback targets (wasmtime, composed,
-# deltic-deno, deltic-browser — the full solo+pair suite each) and the
+# polyengine-deno, polyengine-browser — the full solo+pair suite each) and the
 # interop directions (every implementation against the libwebrtc
 # reference peer in both orders, the reference self-pair, and the direct
 # implementation pairs — the pair-only suite), aggregates every stream
@@ -64,11 +64,9 @@ jobs:
         # Owns the rev derivation, the rev-keyed tools cache, the
         # install, and the pins gate; conformance::_ct-tools recognizes
         # the stamped install and does not repeat it.
-        uses: polymorph-components/polymorph-test/actions/setup@aca1008344f754db1c2b88da05cb5999333f8d6a
+        uses: polymorph-components/polymorph-test/actions/setup@9f9e4d544b90e3321ac0572be92c57339b963d34
         with:
           tools: component-test-cli
-          js-locks: |
-            conformance/driver-ct/deltic/package-lock.json
 
       - name: Build conformance artifacts
         run: just gha::conformance-build
@@ -107,24 +105,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # The deltic-browser leg's page driver runs under Node (playwright
+      # The polyengine-browser leg's page driver runs under Node (playwright
       # against the runner image's Chrome; no engine flag anywhere).
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: conformance/driver-ct/deltic/package-lock.json
+          cache-dependency-path: conformance/driver-ct/polyengine/package-lock.json
 
-      # The deltic legs run the suite runtime-linked — deltic-deno under
-      # stock Deno, deltic-browser inside Chromium — no engine flag (see
-      # conformance/driver-ct/deltic/README.md).
-      - name: Set up Deno (the deltic legs; stock, no flags)
+      # The polyengine legs run the suite runtime-linked — polyengine-deno under
+      # stock Deno, polyengine-browser inside Chromium — no engine flag (see
+      # conformance/driver-ct/polyengine/README.md).
+      - name: Set up Deno (the polyengine legs; stock, no flags)
         uses: denoland/setup-deno@v2
         with:
           deno-version: "2.9.5"
 
-      # Runtime dependencies only (the deltic legs' module graphs and npm
+      # Runtime dependencies only (the polyengine legs' module graphs and npm
       # trees are materialized by their own just recipes). The netns lab
       # never runs in CI, so its apt packages are skipped.
       - name: Install dependencies
@@ -151,22 +149,22 @@ jobs:
       # against the pin.
       - name: Publish the conformance matrix
         if: always() && hashFiles('conformance/driver-ct/results/*.jsonl') != ''
-        uses: polymorph-components/polymorph-test/actions/aggregate@aca1008344f754db1c2b88da05cb5999333f8d6a
+        uses: polymorph-components/polymorph-test/actions/aggregate@9f9e4d544b90e3321ac0572be92c57339b963d34
         with:
           lock: conformance/guest-ct/tests.lock
           manifest: conformance/driver-ct/targets.toml
           results: |
             wasmtime=conformance/driver-ct/results/wasmtime.jsonl
             composed=conformance/driver-ct/results/composed.jsonl
-            deltic-deno=conformance/driver-ct/results/deltic-deno.jsonl
-            deltic-browser=conformance/driver-ct/results/deltic-browser.jsonl
+            polyengine-deno=conformance/driver-ct/results/polyengine-deno.jsonl
+            polyengine-browser=conformance/driver-ct/results/polyengine-browser.jsonl
           summary-title: Conformance matrix
           cli: target/ct-tools/bin/component-test
           cargo-lock: Cargo.lock
 
       - name: Publish the interop conformance matrix
         if: always() && hashFiles('conformance/driver-ct/results/*.jsonl') != ''
-        uses: polymorph-components/polymorph-test/actions/aggregate@aca1008344f754db1c2b88da05cb5999333f8d6a
+        uses: polymorph-components/polymorph-test/actions/aggregate@9f9e4d544b90e3321ac0572be92c57339b963d34
         with:
           lock: conformance/guest-pair-ct/tests.lock
           manifest: conformance/driver-ct/targets-interop.toml
@@ -174,14 +172,14 @@ jobs:
             reference=conformance/driver-ct/results/reference.jsonl
             wasmtime-x-reference=conformance/driver-ct/results/wasmtime-x-reference.jsonl
             reference-x-wasmtime=conformance/driver-ct/results/reference-x-wasmtime.jsonl
-            deltic-deno-x-reference=conformance/driver-ct/results/deltic-deno-x-reference.jsonl
-            reference-x-deltic-deno=conformance/driver-ct/results/reference-x-deltic-deno.jsonl
-            deltic-browser-x-reference=conformance/driver-ct/results/deltic-browser-x-reference.jsonl
-            reference-x-deltic-browser=conformance/driver-ct/results/reference-x-deltic-browser.jsonl
+            polyengine-deno-x-reference=conformance/driver-ct/results/polyengine-deno-x-reference.jsonl
+            reference-x-polyengine-deno=conformance/driver-ct/results/reference-x-polyengine-deno.jsonl
+            polyengine-browser-x-reference=conformance/driver-ct/results/polyengine-browser-x-reference.jsonl
+            reference-x-polyengine-browser=conformance/driver-ct/results/reference-x-polyengine-browser.jsonl
             wasip3-guest-x-reference=conformance/driver-ct/results/wasip3-guest-x-reference.jsonl
             reference-x-wasip3-guest=conformance/driver-ct/results/reference-x-wasip3-guest.jsonl
-            wasmtime-x-deltic-deno=conformance/driver-ct/results/wasmtime-x-deltic-deno.jsonl
-            deltic-deno-x-wasmtime=conformance/driver-ct/results/deltic-deno-x-wasmtime.jsonl
+            wasmtime-x-polyengine-deno=conformance/driver-ct/results/wasmtime-x-polyengine-deno.jsonl
+            polyengine-deno-x-wasmtime=conformance/driver-ct/results/polyengine-deno-x-wasmtime.jsonl
             wasmtime-x-wasip3-guest=conformance/driver-ct/results/wasmtime-x-wasip3-guest.jsonl
             wasip3-guest-x-wasmtime=conformance/driver-ct/results/wasip3-guest-x-wasmtime.jsonl
           summary-title: Interop conformance matrix

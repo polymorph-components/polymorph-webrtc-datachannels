@@ -5,7 +5,7 @@ demo/manual-signaling driver (`wasmtime-demo`) that exercise the
 `polymorph:webrtc-datachannels` interfaces.
 
 - **`echo-demo`** / **`cli-signaling`** — guest components whose WebRTC work is
-  performed by a **host** (`wasmtime-impl`, or `deltic-impl` under a JS engine).
+  performed by a **host** (`wasmtime-impl`, or `polyengine-impl` under a JS engine).
 - **`webrtc-consumer`** — a minimal consumer component that **imports**
   `polymorph:webrtc-datachannels/connections`. It is composed (`wac plug`) with the
   [`wasip3-impl`](../wasip3-impl) provider component — whose in-guest sans-I/O

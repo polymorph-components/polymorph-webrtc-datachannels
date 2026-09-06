@@ -1,16 +1,16 @@
-// The `conformance:signaling/mailbox` host for the deltic conformance leg: a
+// The `conformance:signaling/mailbox` host for the polyengine conformance leg: a
 // `fetch`-based client for the suite-owned HTTP mailbox served by
 // `conformance-signalingd` (see `conformance/signaling/PROTOCOL.md`). The
-// deltic analogue of the retired jco `signaling.js` (see git history) — same endpoints, same long-poll
+// polyengine analogue of the retired jco `signaling.js` (see git history) — same endpoints, same long-poll
 // discipline; only the boundary conventions differ (`throw new
-// WitError({ tag, val })` rather than a bare `{ tag, val }` payload, per
-// deltic's contracts/embedder-api.md §"Error model").
+// ComponentException({ kind, value })` rather than a bare `{ tag, val }` payload, per
+// polyengine's contracts/embedder-api.md §"Error model").
 //
 // Blob payloads are opaque here; the conformance guest owns the encoding.
 // Failures are thrown as the WIT `error` variant's `other` case, which the
 // runtime lifts into the `result<_, error>` the mailbox interface declares.
 
-import { WitError } from "@deltic/runtime/embedder";
+import { ComponentException } from "@polyengine/protocol";
 
 /** The mailbox interface's WIT id (conformance/wit/deps/conformance-signaling). */
 export const MAILBOX_INTERFACE = "conformance:signaling/mailbox@0.1.0";
@@ -118,8 +118,8 @@ export class Session {
 }
 
 /** Map a host-side mailbox failure to the guest-visible `error.other`. */
-function mailboxError(detail: string): WitError {
-  return new WitError({ tag: "other", val: `mailbox: ${detail}` });
+function mailboxError(detail: string): ComponentException {
+  return new ComponentException({ kind: "other", value: `mailbox: ${detail}` });
 }
 
 /**

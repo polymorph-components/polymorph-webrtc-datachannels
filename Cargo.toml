@@ -43,15 +43,21 @@ resolver = "2"
 [workspace.dependencies]
 rtc = "=0.21.0-rc.2"
 webrtc = "=0.21.0-rc.2"
-# The component-test harness, rev-pinned (no registry release yet).
-# One rev everywhere: these four entries, the deltic driver's
-# package.json pin, the actions/*@<rev> refs in conformance.yml, and
-# the CLI install (conformance/justfile reads the rev back out of
-# Cargo.lock). Bump with `component-test pins bump <rev> --cargo-toml
-# Cargo.toml --package-json conformance/driver-ct/deltic/package.json
-# --workflow .github/workflows/conformance.yml`, then the follow-ups
-# it prints.
-component-test-sdk = { git = "https://github.com/polymorph-components/polymorph-test", rev = "aca1008344f754db1c2b88da05cb5999333f8d6a" }
-component-test-runner = { git = "https://github.com/polymorph-components/polymorph-test", rev = "aca1008344f754db1c2b88da05cb5999333f8d6a" }
-component-test-formats = { git = "https://github.com/polymorph-components/polymorph-test", rev = "aca1008344f754db1c2b88da05cb5999333f8d6a" }
-component-test-results = { git = "https://github.com/polymorph-components/polymorph-test", rev = "aca1008344f754db1c2b88da05cb5999333f8d6a" }
+# The component-test harness arrives two ways, both naming one release:
+# the crates here are rev-pinned (no registry release yet), and the JS
+# runner core is jsr:@polymorph/test's npm-compat package
+# (@jsr/polymorph__test, resolved through npm.jsr.io per
+# conformance/driver-ct/polyengine/.npmrc), version-pinned in that tree's
+# package.json/package-lock.json. Bump the cargo side with
+# `component-test pins bump <rev> --cargo-toml Cargo.toml --workflow
+# .github/workflows/conformance.yml`, then the follow-ups it prints
+# (`cargo update`); bump the JS side by setting the matching release
+# version on conformance/driver-ct/polyengine/package.json's
+# @jsr/polymorph__test dependency and running `npm install` there. The
+# cargo pins gate (conformance::_ct-tools), the JS runner-js pin gate
+# (scripts/check-runner-js-pin.sh), and the actions' own ref checks fail
+# on skew.
+component-test-sdk = { git = "https://github.com/polymorph-components/polymorph-test", rev = "9f9e4d544b90e3321ac0572be92c57339b963d34" }
+component-test-runner = { git = "https://github.com/polymorph-components/polymorph-test", rev = "9f9e4d544b90e3321ac0572be92c57339b963d34" }
+component-test-formats = { git = "https://github.com/polymorph-components/polymorph-test", rev = "9f9e4d544b90e3321ac0572be92c57339b963d34" }
+component-test-results = { git = "https://github.com/polymorph-components/polymorph-test", rev = "9f9e4d544b90e3321ac0572be92c57339b963d34" }

@@ -27,15 +27,15 @@ version = "0.1"
 # the same driver with the composed linker profile.
 [targets.composed]
 
-# The deltic-native host (deltic-impl/src/webrtc.ts,
+# The polyengine-native host (polyengine-impl/src/webrtc.ts,
 # node-datachannel-backed) runtime-linked under stock Deno — no
 # transpile step, no engine flag; the fetch mailbox
-# (conformance/driver-ct/deltic/signaling.ts).
-[targets.deltic-deno]
+# (conformance/driver-ct/polyengine/signaling.ts).
+[targets.polyengine-deno]
 
-# The deltic-native host module (deltic-impl) runtime-linked inside a
+# The polyengine-native host module (polyengine-impl) runtime-linked inside a
 # real headless Chromium over the browser's native RTCPeerConnection —
 # the run happens in the page (Window-only API), one deno-bundled
 # module; the fetch mailbox reaches the driver's signaling server
 # through the leg's same-origin proxy.
-[targets.deltic-browser]
+[targets.polyengine-browser]

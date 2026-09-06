@@ -3,7 +3,7 @@
 //! `polymorph:webrtc-datachannels` `connections` resources.
 //!
 //! This is the third implementation alongside the `wasmtime-impl` (webrtc-rs)
-//! and `deltic-impl` (JS engines/browser) hosts. Unlike those two — which run the fully async
+//! and `polyengine-impl` (JS engines/browser) hosts. Unlike those two — which run the fully async
 //! `webrtc-rs` engine host-side — this one is itself a component: it drives the
 //! sans-I/O `rtc` stack over WASIp3 `wasi:sockets` UDP and `wasi:clocks` timers,
 //! entirely inside wasm.

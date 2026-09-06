@@ -686,6 +686,20 @@ fn close_peer_connections(connections: Vec<Arc<dyn WebrtcPeerConnection>>) {
 /// loopback; the conformance netns lab (see `conformance/README.md`) overrides
 /// it per scenario to exercise host, server-reflexive, and relay candidate
 /// paths.
+/// Size of the dedicated reactor pool every peer-connection driver runs
+/// on (`webrtc`'s `spawn_reactor`: a bounded set of single-threaded
+/// runtimes on their own OS threads; drivers are pinned round-robin and
+/// their I/O binds to the pool thread). Drivers never share the
+/// embedder's runtime, so a driver that stalls — or spins, which a
+/// sans-IO core reporting a timer its handler cannot advance made one
+/// do, at millions of loop passes per second — costs a pool thread,
+/// not the host. Keeping the host responsive is also what lets such a
+/// wedge self-heal: the resource's owner still runs, observes the
+/// failure, and drops the connection, whose `closing` check ends the
+/// driver loop. Two threads bound the process cost while keeping one
+/// wedged driver from pausing every other connection's driver.
+const DRIVER_REACTOR_POOL_SIZE: usize = 2;
+
 async fn new_peer_connection_with(
     configure: impl FnOnce(SettingEngineBuilder) -> SettingEngineBuilder,
     ice: crate::WebrtcIceConfig,
@@ -727,6 +741,7 @@ async fn new_peer_connection_with(
         .with_handler(handler)
         .with_runtime(runtime)
         .with_udp_addrs(udp_addrs)
+        .with_dedicated_reactor_pool_size(DRIVER_REACTOR_POOL_SIZE)
         .build()
         .await?;
     Ok(Arc::new(pc))
@@ -819,6 +834,48 @@ impl PeerConnectionEventHandler for CallbackHandler {
     ) {
         if let Some(f) = &self.on_connection_state {
             f(state);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The peer-connection driver must run on the dedicated reactor pool
+    /// (`webrtc-rx*` threads), never on the embedder's runtime: a stalled
+    /// or spinning driver then costs a pool thread, not the host — and
+    /// the host staying responsive is what lets the owner drop the
+    /// connection and end the wedge. The pool engagement is one easily
+    /// lost builder call, and nothing else observes it; this does.
+    #[cfg(target_os = "linux")]
+    #[tokio::test]
+    async fn driver_runs_on_the_dedicated_reactor_pool() {
+        let _pc = PeerConnection::new_with(
+            None,
+            crate::WebrtcIceConfig::default(),
+            Duration::from_secs(5),
+            usize::MAX,
+        );
+        let deadline = std::time::Instant::now() + Duration::from_secs(10);
+        loop {
+            let found = std::fs::read_dir("/proc/self/task")
+                .expect("/proc is available on linux")
+                .filter_map(|entry| entry.ok())
+                .any(|entry| {
+                    std::fs::read_to_string(entry.path().join("comm"))
+                        .map(|comm| comm.trim().starts_with("webrtc-rx"))
+                        .unwrap_or(false)
+                });
+            if found {
+                break;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "no webrtc-rx reactor-pool thread appeared: \
+                 the driver is running on the embedder's runtime"
+            );
+            tokio::time::sleep(Duration::from_millis(50)).await;
         }
     }
 }

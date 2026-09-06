@@ -1,18 +1,18 @@
-// The deltic browser child of rtc-ct-driver: the suite COMPONENT
-// runtime-linked against this repo's deltic host module (deltic-impl
+// The polyengine browser child of rtc-ct-driver: the suite COMPONENT
+// runtime-linked against this repo's polyengine host module (polyengine-impl
 // over the browser's native RTCPeerConnection in a real headless
 // Chromium) for one selection and (for pair runs) one role. Emits
 // component-test results JSONL on stdout; the driver folds and merges.
 // The server, launch, stall watchdog, and Chrome ladder live in the
 // upstream browser driver; the run itself happens in the page
-// (../../../target/deltic-browser/webrtc-page.mjs, one deno-bundled
+// (../../../target/polyengine-browser/webrtc-page.mjs, one deno-bundled
 // module — RTCPeerConnection is Window-only, so no Web Worker pool, and
 // the bundle needs no import map). This file is the frame: the
 // signaling reverse-proxy, the role environment, target configuration,
 // and the stdout contract — the browser sibling of ./run.ts (the retired
 // jco legs carried the same sibling split; see git history).
 //
-// deltic is a runtime linker: no transpile step, no generated tree, no
+// polyengine is a runtime linker: no transpile step, no generated tree, no
 // engine flag (the callback ABI runs on stock Chromium).
 import { access } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
@@ -22,15 +22,15 @@ import { parseArgs } from "node:util";
 import {
   findChrome,
   runPageHarness,
-} from "@polymorph/component-test-js/browser-driver";
+} from "@jsr/polymorph__test/browser-driver";
 
-const DELTIC_DIR = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = resolve(DELTIC_DIR, "..", "..", "..");
-// Must agree with fetch-translator.ts's TAG (the translator is served
-// from its cache directory) and the justfile's bundle output path.
-const TAG = "pre-10cc776";
-const PAGE_URL = "/target/deltic-browser/webrtc-page.mjs";
-const TRANSLATOR_URL = `/target/deltic/${TAG}/deltic-translator-shim.wasm`;
+const POLYENGINE_DIR = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = resolve(POLYENGINE_DIR, "..", "..", "..");
+// The bundle + translator asset live in a version-free directory: the
+// deno.lock files own the polyengine version now (no tag to keep in sync
+// here; see justfile's `_polyengine-browser-bundle` recipe).
+const PAGE_URL = "/target/polyengine-browser/webrtc-page.mjs";
+const TRANSLATOR_URL = "/target/polyengine-browser/polyengine-translator-shim.wasm";
 const MAX_INBOUND_BUFFER_BYTES = 512 * 1024;
 // The single-attempt wall bound per case, matching the wasmtime leg.
 const CASE_TIMEOUT_MS = 90_000;
@@ -45,7 +45,7 @@ const { values } = parseArgs({
       default: "/target/wasm32-wasip2/release/conformance_guest_ct.wasm",
     },
     name: { type: "string", default: "conformance-guest-ct" },
-    target: { type: "string", default: "deltic-browser" },
+    target: { type: "string", default: "polyengine-browser" },
     select: { type: "string", default: "" },
   },
 });
@@ -79,8 +79,8 @@ async function proxy(req, res, signalingBase) {
 
 async function main() {
   for (const [what, rel] of [
-    ["bundled page (run `just conformance::run-deltic-browser`)", PAGE_URL],
-    ["translator asset (run fetch-translator.ts)", TRANSLATOR_URL],
+    ["bundled page (run `just conformance::run-polyengine-browser`)", PAGE_URL],
+    ["translator asset (run `just conformance::run-polyengine-browser`)", TRANSLATOR_URL],
     ["suite component (run `just conformance::build-suites`)", values.suite],
   ]) {
     try {
@@ -113,7 +113,7 @@ async function main() {
   };
   const html = `<!doctype html>
 <link rel="icon" href="data:,">
-<title>conformance-ct deltic browser leg</title>
+<title>conformance-ct polyengine browser leg</title>
 <script type="module">
 import { run } from "${PAGE_URL}";
 await run(${JSON.stringify(config)});

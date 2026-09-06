@@ -28,14 +28,21 @@ ci:
 # Run the fast pre-commit checks (fmt, clippy, WIT, Rust tests); see AGENTS.md.
 check: fmt-check clippy validate-wit test
 
-# Type-check and unit-test the deltic-native host module (deltic-impl)
-# and type-check the deltic conformance leg. Needs Deno; the installs
+# Type-check and unit-test the polyengine-native host module (polyengine-impl)
+# and type-check the polyengine conformance leg. Needs Deno; the installs
 # materialize the pinned module graph + the node-datachannel addon.
-deltic-check:
-    cd deltic-impl && deno install --frozen --allow-scripts=npm:node-datachannel
-    cd deltic-impl && deno task check && deno task test
-    cd conformance/driver-ct/deltic && deno install --frozen --allow-scripts=npm:node-datachannel
-    cd conformance/driver-ct/deltic && deno task check
+# Also asserts the one-version-everywhere pin gate across every deno.json
+# that imports a jsr:@polyengine/* package (replaces the retired
+# assertPinConsistency(); see conformance/driver-ct/polyengine/README.md),
+# and the sibling one-version gate for the JS runner core
+# (@jsr/polymorph__test, from JSR; see scripts/check-runner-js-pin.sh).
+polyengine-check:
+    ./scripts/check-polyengine-pin.sh
+    ./scripts/check-runner-js-pin.sh
+    cd polyengine-impl && deno install --frozen --allow-scripts=npm:node-datachannel
+    cd polyengine-impl && deno task check && deno task test
+    cd conformance/driver-ct/polyengine && deno install --frozen --allow-scripts=npm:node-datachannel
+    cd conformance/driver-ct/polyengine && deno task check
 
 # Check formatting across all crates.
 fmt-check:

@@ -3,32 +3,35 @@
 //
 // Authority: wit/webrtc.wit `interface types` (polymorph-webrtc-datachannels,
 // read-only reference). Enums are kebab-case string literal unions; variants
-// are `{ tag, val? }`; records are plain camelCase objects.
+// are `{ kind, value? }`; records are plain camelCase objects.
 
-import type { Stream, StreamSource } from "@deltic/runtime/embedder";
+import type { Stream, StreamSource } from "@polyengine/protocol";
 
 // --- error -----------------------------------------------------------------
 
 export type WebrtcError =
-  | { tag: "closed" }
-  | { tag: "timed-out" }
-  | { tag: "invalid-signaling"; val: string }
-  | { tag: "receiving-via-stream" }
-  | { tag: "receive-buffer-overflow" }
-  | { tag: "other"; val: string };
+  | { kind: "closed" }
+  | { kind: "timed-out" }
+  | { kind: "invalid-signaling"; value: string }
+  | { kind: "receiving-via-stream" }
+  | { kind: "receive-buffer-overflow" }
+  | { kind: "other"; value: string };
 
 // --- message -----------------------------------------------------------------
 
 export type Message =
-  | { tag: "binary"; val: Uint8Array }
-  | { tag: "string"; val: string };
+  | { kind: "binary"; value: Uint8Array }
+  | { kind: "string"; value: string };
 
-export const Message = {
+export const Message: {
+  binary(bytes: Uint8Array): Message;
+  string(text: string): Message;
+} = {
   binary(bytes: Uint8Array): Message {
-    return { tag: "binary", val: bytes };
+    return { kind: "binary", value: bytes };
   },
   string(text: string): Message {
-    return { tag: "string", val: text };
+    return { kind: "string", value: text };
   },
 };
 
@@ -84,8 +87,8 @@ export interface IceCandidate {
 // --- config-error ------------------------------------------------------------------
 
 export type ConfigError =
-  | { tag: "not-supported" }
-  | { tag: "invalid"; val: string };
+  | { kind: "not-supported" }
+  | { kind: "invalid"; value: string };
 
 // --- ice-server --------------------------------------------------------------------
 

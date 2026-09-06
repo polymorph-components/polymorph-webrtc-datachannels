@@ -1,0 +1,10 @@
+{
+  "name": "@polymorph/webrtc-conformance-polyengine-browser",
+  "private": true,
+  "type": "module",
+  "description": "Node driver for the polyengine-browser child of rtc-ct-driver: playwright + the upstream page harness serving the deno-bundled polyengine page (polyengine-impl over the browser's RTCPeerConnection).",
+  "dependencies": {
+    "@jsr/polymorph__test": "0.2.1",
+    "playwright-core": "^1.61.1"
+  }
+}

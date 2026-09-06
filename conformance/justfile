@@ -20,12 +20,12 @@ composed := "target/wasm32-wasip2/release/composed/conformance_guest_ct.wasm"
 composed_pair := "target/wasm32-wasip2/release/composed/conformance_guest_pair_ct.wasm"
 results := "conformance/driver-ct/results"
 ct_cli := "target/ct-tools/bin/component-test"
-deltic := "conformance/driver-ct/deltic"
+polyengine := "conformance/driver-ct/polyengine"
 
 # The full conformance run: every loopback target, every interop
 # direction, both aggregates, and the committed-matrix gates.
 [doc("Run the loopback + interop conformance suites and gate the matrices")]
-all: build lock-check run-wasmtime run-composed run-deltic run-deltic-browser run-interop aggregate matrix-check
+all: build lock-check run-wasmtime run-composed run-polyengine run-polyengine-browser run-interop aggregate matrix-check
 
 # ---------------------------------------------------------------------------
 # Builders.
@@ -65,8 +65,11 @@ build: build-suites build-driver build-composed
 # bootstrap extraction anchors on the crate name, not the repository
 # URL (URLs change on renames): the sdk's [[package]] block in
 # Cargo.lock carries the git source to install from. The pins gate then
-# asserts one rev everywhere — a skewed bump runs the JS harness
-# against a Rust runner from a different rev.
+# asserts one rev everywhere across the Cargo-side crates. The JS
+# runner core arrives from JSR now (@jsr/polymorph__test, version-pinned
+# in the polyengine driver's package-lock.json) rather than a git rev, so it
+# has its own one-version gate (scripts/check-polyengine-pin.sh's
+# runner-js-pin-check) instead of a --js-lock leg here.
 _ct-tools:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -77,8 +80,7 @@ _ct-tools:
         cargo install --locked --root target/ct-tools --git "$url" --rev "$rev" component-test-cli
         printf '%s' "$rev" > target/ct-tools/.rev
     fi
-    {{ct_cli}} pins --cargo-lock Cargo.lock \
-        --js-lock {{deltic}}/package-lock.json --expect "$rev" > /dev/null
+    {{ct_cli}} pins --cargo-lock Cargo.lock --expect "$rev" > /dev/null
 
 # The committed lockfiles are the corpus inventories; drift fails here
 # and in the runner's own cross-check.
@@ -108,56 +110,54 @@ run-composed: _results-dir
         --target composed --kind composed --artifact {{composed}} \
         -o {{results}}/composed.jsonl
 
-# The deltic leg's dependencies: Deno materializes the pinned module
+# The polyengine leg's dependencies: Deno materializes the pinned module
 # graph and the node-datachannel native addon (whose install script needs
 # an explicit grant) into the leg's node_modules. Idempotent.
-deltic-deps:
-    cd {{deltic}} && deno install --frozen --allow-scripts=npm:node-datachannel
+polyengine-deps:
+    cd {{polyengine}} && deno install --frozen --allow-scripts=npm:node-datachannel
 
-run-deltic: _results-dir deltic-deps
-    #!/usr/bin/env bash
-    set -euo pipefail
-    shim=$(deno run --config {{deltic}}/deno.json --frozen \
-        --allow-read=. --allow-write=target/deltic \
-        --allow-net=github.com,objects.githubusercontent.com,release-assets.githubusercontent.com \
-        {{deltic}}/fetch-translator.ts)
-    DELTIC_TRANSLATOR="$shim" timeout {{timeout}} {{driver}} loopback {{suite}} \
-        --target deltic-deno --kind deltic-deno --script {{deltic}}/run.ts \
-        -o {{results}}/deltic-deno.jsonl
+run-polyengine: _results-dir polyengine-deps
+    timeout {{timeout}} {{driver}} loopback {{suite}} \
+        --target polyengine-deno --kind polyengine-deno --script {{polyengine}}/run.ts \
+        -o {{results}}/polyengine-deno.jsonl
 
-# The deltic browser driver's npm tree (the upstream page driver +
+# The polyengine browser driver's npm tree (the upstream page driver +
 # playwright-core; no transpiler).
-_deltic-browser-prepared:
+_polyengine-browser-prepared:
     #!/usr/bin/env bash
     set -euo pipefail
-    cd {{deltic}}
+    cd {{polyengine}}
     if [ package-lock.json -nt node_modules/.package-lock.json ]; then
         npm ci --no-audit --no-fund
     fi
 
-# The deltic browser leg's runtime inputs: the pinned translator +
+# The polyengine browser leg's runtime inputs: the pinned translator +
 # embedder assets and the one deno-bundled page module (engine + host
 # module + page loop) the static server serves. Shared by the loopback
-# leg and the interop directions.
-_deltic-browser-bundle:
+# leg and the interop directions. The translator wasm is extracted from
+# the lock-pinned module cache (no network, no sha bookkeeping — JSR
+# package integrity is in the lock); see scripts/extract-polyengine-translator.py.
+_polyengine-browser-bundle:
     #!/usr/bin/env bash
     set -euo pipefail
-    deno run --config {{deltic}}/deno.json --frozen \
-        --allow-read=. --allow-write=target/deltic \
-        --allow-net=github.com,objects.githubusercontent.com,release-assets.githubusercontent.com \
-        {{deltic}}/fetch-translator.ts >/dev/null
-    mkdir -p target/deltic-browser
-    (cd {{deltic}}/browser && deno bundle --config deno.json --platform browser \
-        -o ../../../../target/deltic-browser/webrtc-page.mjs page-entry.ts)
+    mkdir -p target/polyengine-browser
+    deno info --json --config {{polyengine}}/deno.json --frozen @polyengine/translator \
+        > target/polyengine-browser/.polyengine-info.json
+    pin=$(grep -o 'jsr:@polyengine/runtime@[^/"]*' {{polyengine}}/deno.json | head -1 | sed 's/.*@//')
+    python3 scripts/extract-polyengine-translator.py \
+        target/polyengine-browser/.polyengine-info.json \
+        target/polyengine-browser/polyengine-translator-shim.wasm "$pin"
+    (cd {{polyengine}}/browser && deno bundle --config deno.json --frozen --platform browser \
+        -o ../../../../target/polyengine-browser/webrtc-page.mjs page-entry.ts)
 
-# The suite runtime-linked inside headless Chromium against the deltic
-# host module (deltic-impl over the browser's native RTCPeerConnection):
+# The suite runtime-linked inside headless Chromium against the polyengine
+# host module (polyengine-impl over the browser's native RTCPeerConnection):
 # the run happens in the page (RTCPeerConnection is Window-only), served
 # as one deno-bundled module — no transpile step, no generated tree.
-run-deltic-browser: _results-dir deltic-deps _deltic-browser-prepared _deltic-browser-bundle
+run-polyengine-browser: _results-dir polyengine-deps _polyengine-browser-prepared _polyengine-browser-bundle
     timeout {{timeout}} {{driver}} loopback {{suite}} \
-        --target deltic-browser --kind deltic-browser --script {{deltic}}/run-browser.mjs \
-        -o {{results}}/deltic-browser.jsonl
+        --target polyengine-browser --kind polyengine-browser --script {{polyengine}}/run-browser.mjs \
+        -o {{results}}/polyengine-browser.jsonl
 
 # ---------------------------------------------------------------------------
 # Interop directions (the pair-only suite; every implementation against
@@ -165,26 +165,22 @@ run-deltic-browser: _results-dir deltic-deps _deltic-browser-prepared _deltic-br
 # direct implementation pairs).
 # ---------------------------------------------------------------------------
 
-interop_directions := "wasmtime-x-reference reference-x-wasmtime deltic-deno-x-reference reference-x-deltic-deno deltic-browser-x-reference reference-x-deltic-browser wasip3-guest-x-reference reference-x-wasip3-guest wasmtime-x-deltic-deno deltic-deno-x-wasmtime wasmtime-x-wasip3-guest wasip3-guest-x-wasmtime"
+interop_directions := "wasmtime-x-reference reference-x-wasmtime polyengine-deno-x-reference reference-x-polyengine-deno polyengine-browser-x-reference reference-x-polyengine-browser wasip3-guest-x-reference reference-x-wasip3-guest wasmtime-x-polyengine-deno polyengine-deno-x-wasmtime wasmtime-x-wasip3-guest wasip3-guest-x-wasmtime"
 
-# The deltic children join interop directions the same way they run
-# loopback: the Deno child reads the pair suite off the filesystem (and
-# the translator from DELTIC_TRANSLATOR), the browser child fetches both
-# from its static server (prepared by _deltic-browser-bundle).
-run-interop: _results-dir deltic-deps _deltic-browser-prepared _deltic-browser-bundle
+# The polyengine children join interop directions the same way they run
+# loopback: the Deno child obtains the translator through the module
+# graph (@polyengine/translator's packaged wasm), the browser child fetches
+# both bundle + translator from its static server (prepared by
+# _polyengine-browser-bundle).
+run-interop: _results-dir polyengine-deps _polyengine-browser-prepared _polyengine-browser-bundle
     #!/usr/bin/env bash
     set -euo pipefail
-    shim=$(deno run --config {{deltic}}/deno.json --frozen \
-        --allow-read=. --allow-write=target/deltic \
-        --allow-net=github.com,objects.githubusercontent.com,release-assets.githubusercontent.com \
-        {{deltic}}/fetch-translator.ts)
-    export DELTIC_TRANSLATOR="$shim"
     code=0
     for d in {{interop_directions}}; do
         echo "== interop $d =="
         timeout {{timeout}} {{driver}} interop {{pair_suite}} --direction "$d" \
             --composed-pair {{composed_pair}} \
-            --deno-script {{deltic}}/run.ts --browser-script {{deltic}}/run-browser.mjs \
+            --deno-script {{polyengine}}/run.ts --browser-script {{polyengine}}/run-browser.mjs \
             -o {{results}}/"$d".jsonl || code=1
     done
     echo "== interop reference (self-pair) =="
@@ -208,8 +204,8 @@ aggregate: _ct-tools
         --manifest conformance/driver-ct/targets.toml \
         --results wasmtime={{results}}/wasmtime.jsonl \
         --results composed={{results}}/composed.jsonl \
-        --results deltic-deno={{results}}/deltic-deno.jsonl \
-        --results deltic-browser={{results}}/deltic-browser.jsonl \
+        --results polyengine-deno={{results}}/polyengine-deno.jsonl \
+        --results polyengine-browser={{results}}/polyengine-browser.jsonl \
         -o {{results}}/matrix.md
     args=(aggregate --lock conformance/guest-pair-ct/tests.lock \
         --manifest conformance/driver-ct/targets-interop.toml \

@@ -1,9 +1,25 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@polyengine/protocol@~0.3.1": "0.3.1",
+    "jsr:@std/assert@1": "1.0.19",
+    "jsr:@std/internal@^1.0.12": "1.0.14",
     "npm:node-datachannel@0.32.3": "0.32.3",
-    "npm:playwright-core@^1.61.1": "1.62.1",
     "npm:werift@0.22.2": "0.22.2"
+  },
+  "jsr": {
+    "@polyengine/protocol@0.3.1": {
+      "integrity": "3cba0ded857c5cc911fcf9c0782c7566c79af89ddc8e0ec4e48ece60c807a518"
+    },
+    "@std/assert@1.0.19": {
+      "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/internal@1.0.14": {
+      "integrity": "291516b3d4c35024d6ffbc0a9df5bf4c64116e05b50012cf846710152d2ffdf7"
+    }
   },
   "npm": {
     "@fidm/asn1@1.0.4": {
@@ -31,8 +47,8 @@
     "@noble/hashes@1.8.0": {
       "integrity": "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="
     },
-    "@peculiar/asn1-cms@2.8.0": {
-      "integrity": "sha512-NgekZOrSJFSBFLFoLfwePguAWAx7z1+f2TEsWFUMyiqqfntZ4+S/S5hzqME3q4pCA0iOsFKdwiQ35dwY24eVqA==",
+    "@peculiar/asn1-cms@2.9.4": {
+      "integrity": "sha512-cben7oxmQsUGZqotus7yt0srYdncOT6RNWcTQ77T2RFOXejYVYkXadrfePdRcrVpO9K95IRLKKglG2k38jKXuw==",
       "dependencies": [
         "@peculiar/asn1-schema",
         "@peculiar/asn1-x509",
@@ -41,8 +57,8 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-csr@2.8.0": {
-      "integrity": "sha512-akbF8+uvleHs8sejNPQxwmVFuInAg6FMNHOwMILXfP518YfFJwdR3jr6oNUPOaEJfuEhn/vkNOCIT6ASUd4mbg==",
+    "@peculiar/asn1-csr@2.9.4": {
+      "integrity": "sha512-xd4YN4vpRjkDAQWVfZZkeu12IEND7DOpkqaHSIHxZl1uggUNa9Ju0QxY2jHvDAS9pP0zhRBytg8ifsnGo3V0jw==",
       "dependencies": [
         "@peculiar/asn1-schema",
         "@peculiar/asn1-x509",
@@ -50,8 +66,8 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-ecc@2.8.0": {
-      "integrity": "sha512-ohwlk+u9Rv2NOAY1c6MfHj45ATVF8R1DUN/WCgABiRtLi2ZftlZWZX7KvpAbU8v9xPcmoILfELeEABj/rn18AQ==",
+    "@peculiar/asn1-ecc@2.9.4": {
+      "integrity": "sha512-JJXefFshRAuVAjWQo/39bkg1ywc1VaiO44S8RRC+Ykvf/u2KDmYffoDb0ZBPCR5uJy4AGKQhl8mX+Q8ShcWaXQ==",
       "dependencies": [
         "@peculiar/asn1-schema",
         "@peculiar/asn1-x509",
@@ -59,8 +75,8 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-pfx@2.8.0": {
-      "integrity": "sha512-5yof1ytoB++RQtaFbqSUJ8pxDJtZT6vbVqZ8XoJ61ph7UjNVvfFwAilnCodqkNsAodpy13gDhoxZXw00pghnyg==",
+    "@peculiar/asn1-pfx@2.9.4": {
+      "integrity": "sha512-khuGzHTzNzk4GDlIBEILyIs6Lce0yn0ZBdoI9v93kmNncfZRhD+AQ5ODFqdhvoE8cMJF/JMTQ8yA+t1D14kqCw==",
       "dependencies": [
         "@peculiar/asn1-cms",
         "@peculiar/asn1-pkcs8",
@@ -70,8 +86,8 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-pkcs8@2.8.0": {
-      "integrity": "sha512-qAKXtLpBEw9LqhKpjw3ajZSXlBur+ipW+y2ivVBQAG6F6qRx94yO+1ZR4mvw+YaCfKSaOzLeYEzsPaBp4SJELA==",
+    "@peculiar/asn1-pkcs8@2.9.4": {
+      "integrity": "sha512-duRdotlUx9eDZe6QrQpQKl61RbWykCHBCkKayP8V8XdEFwlKHZ8qGGDMyS6Pye7OX7nLFttTTpRkJeet78ckwQ==",
       "dependencies": [
         "@peculiar/asn1-schema",
         "@peculiar/asn1-x509",
@@ -79,8 +95,8 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-pkcs9@2.8.0": {
-      "integrity": "sha512-b5nDWCnkV60+cQ141D6sVVwK9nz64R5n3zSVnklGd+ECdkW2Ol3U1a6yYFlalpSOaD557yuJB64A+q42jG7lUQ==",
+    "@peculiar/asn1-pkcs9@2.9.4": {
+      "integrity": "sha512-kaL4cNxBpdQE2dKlyZBqz4ygCrwffO+8wfoxTEqM1Z8RadvCeELBRzcv0dzM8aY9azHMwODO5nxU65zXmhToOQ==",
       "dependencies": [
         "@peculiar/asn1-cms",
         "@peculiar/asn1-pfx",
@@ -92,8 +108,8 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-rsa@2.8.0": {
-      "integrity": "sha512-zHEUlCqB2mk7x2lxDwHHJy7hWZOPdGHVlsmITWKB5/PbQo61atbu9PJ/0r9dQNMwFzbKPXZ8uK8/91eUhRznSg==",
+    "@peculiar/asn1-rsa@2.9.4": {
+      "integrity": "sha512-pZ96eD1PptovcWQ/GSmuNFXd/7EQJNlKfDaNCyE2rx3W0v6QFelkzquVqRSRyyDXXCYD69ZXJDzZ8GhIiQzKoA==",
       "dependencies": [
         "@peculiar/asn1-schema",
         "@peculiar/asn1-x509",
@@ -101,16 +117,16 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-schema@2.8.0": {
-      "integrity": "sha512-7YT0U/ze0tF2QOBbE15gKZwy5tvgGyLRiRHLzhlbOpf7BT032oBSd0haZqXn5W6l26WLlu3dyxzjM+2638/z2Q==",
+    "@peculiar/asn1-schema@2.9.4": {
+      "integrity": "sha512-GjzePcT9Iw8NzeOPf73iNS9xM+TBhd/FilAfP+RQGkTMQJTVWtytN3JHJACCjf/ABNau5S7mS3g+DcuxmRgYEg==",
       "dependencies": [
         "@peculiar/utils",
         "asn1js",
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-x509-attr@2.8.0": {
-      "integrity": "sha512-tHjkfS/qhMnmrlB2J9NhflQlQ7In3khO3CfmVrriOlpTeErY9ZIKOso1hQ5JQiyrJ7ShvqVPk7E5fQmbclkSKA==",
+    "@peculiar/asn1-x509-attr@2.9.4": {
+      "integrity": "sha512-ehQXbpQaQYycgu8OrvigwSPTFfVRcu0ECNYCWw+yzBp02Lw5paRqzzhUpfOgO2K38+WfFZuEz/0RPtam5g0OMg==",
       "dependencies": [
         "@peculiar/asn1-schema",
         "@peculiar/asn1-x509",
@@ -118,8 +134,8 @@
         "tslib@2.8.1"
       ]
     },
-    "@peculiar/asn1-x509@2.8.0": {
-      "integrity": "sha512-N0CMuhWUzsWEVq6F1q9X6+VKUnWzSW+cSVg+aPaGGwDdbFoFWTYgin5MHwXgpWd6y9COMBxnfy/Qc+Xc7F0Zwg==",
+    "@peculiar/asn1-x509@2.9.4": {
+      "integrity": "sha512-CxhBo/RdEbMMob7T31ZdQjGuoyRFLVwrDzTn25bihzBasRg9kRm/0IxIPvhgQtcK/9dNcO1XQL2fuPugwELL0Q==",
       "dependencies": [
         "@peculiar/asn1-schema",
         "@peculiar/utils",
@@ -291,8 +307,8 @@
     "lodash@4.18.1": {
       "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
     },
-    "mediabunny@1.53.0": {
-      "integrity": "sha512-RjWe9yJr9MPvb6kX4gSu54fZD2w1yf6RyCS0Jmgaml+fFSqEr7+XuASXoRxSqJxgc+wIe+7TujXWcyj3evJ3Bg==",
+    "mediabunny@1.55.2": {
+      "integrity": "sha512-EEx4O6qYddAdCyWPMZNDwI7uc5hewNHrPAf9jLcVhIbXoPsiqNQ+D9i1pfadmGkjN2V318jSrZljkpoziYm6Lg==",
       "dependencies": [
         "@types/dom-mediacapture-transform",
         "@types/dom-webcodecs"
@@ -349,13 +365,6 @@
         "wrappy"
       ]
     },
-    "p-cancelable@2.1.1": {
-      "integrity": "sha512-BZOr3nRQHOntUjTrH8+Lh54smKHoHyur8We1V8DSMVrl5A2malOOwuJRnKRDjSnkoeBh4at6BwEnb5I7Jl31wg=="
-    },
-    "playwright-core@1.62.1": {
-      "integrity": "sha512-wPYSwEBJY9GHraISXqyqtx0na0LpO3XEX7jNDhntbex7tzUS7kLnZsOlFruFJB4Hi/rhDMjXGqHewDZ68nYZVw==",
-      "bin": true
-    },
     "prebuild-install@7.1.3": {
       "integrity": "sha512-8Mf2cbV7x1cXPUILADGI3wuhfqWvtiLA1iclTDbFRZkgRQS0NqsPZphna9V+HyTEadheuPmjaJMsbzKQFOzLug==",
       "dependencies": [
@@ -411,9 +420,6 @@
     },
     "reflect-metadata@0.2.2": {
       "integrity": "sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q=="
-    },
-    "rx.mini@1.4.0": {
-      "integrity": "sha512-8w5cSc1mwNja7fl465DXOkVvIOkpvh2GW4jo31nAIvX4WTXCsRnKJGUfiDBzWtYRInEcHAUYIZfzusjIrea8gA=="
     },
     "safe-buffer@5.2.1": {
       "integrity": "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ=="
@@ -513,18 +519,11 @@
         "tweetnacl"
       ]
     },
-    "werift-ice@0.2.2": {
-      "integrity": "sha512-td52pHp+JmFnUn5jfDr/SSNO0dMCbknhuPdN1tFp9cfRj5jaktN63qnAdUuZC20QCC3ETWdsOthcm+RalHpFCQ==",
+    "werift-ice@0.2.3": {
+      "integrity": "sha512-k000fIaw8w2D4Xv5EvW6b5h4faJx8p4D8HPuDzRiGTx6UrLv2BuvUkC60LNqxlDf9o3zh90Hx1WZoHbhuw9keA==",
       "dependencies": [
-        "@shinyoshiaki/jspack",
-        "buffer-crc32",
         "debug",
-        "int64-buffer",
-        "ip",
-        "lodash",
-        "multicast-dns",
-        "p-cancelable",
-        "rx.mini"
+        "multicast-dns"
       ]
     },
     "werift-rtp@0.8.9": {
@@ -575,79 +574,11 @@
       "integrity": "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="
     }
   },
-  "remote": {
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/ct-runner/src/context.ts": "366db52e3189260a7fd2fc2fdb90aea9bd6a3055d83c42acad082eb75565c634",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/ct-runner/src/import-analysis.ts": "64971e796ebccd98730ba2a0e78b599db38284f22b7976687fc4cad898703c32",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/ct-runner/src/mod.ts": "24a88cb8dda9c1d346a1809297cc5b2ab1c3a2d39c4914694c2ee5f76e9911db",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/ct-runner/src/run-suite.ts": "76d76ed7dfbeb7ce24410dfabadb8f1524fe6e1adb0428b7d361310168a44411",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/ct-runner/src/tags.ts": "d64136eb7e21e18e73cc255e052f59377d2be869f4929bf4fc6de026f3b74a0b",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/async_values.ts": "af1279d4e4db5b756268979aeff5b27c1cf6c0f021213655676ade90472f282b",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/context.ts": "b4b60891ef9d9e72b208636f6ba37f0b9b6962d307af6156ad3b5ad59a626902",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/flatten.ts": "6c980fe38d7adce349d5e028b819eb0ffbb92714f958c1d5daae8da3e7ed3889",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/float.ts": "0483e8c1aa8786eee4c6f6357fee6738555e4310650c474aba6cd811a80d7d36",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/handles.ts": "30510750261499f48a812bb8c349a8f88a3bb7239175e6f1d4e6d10c38571e5d",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/layout.ts": "8122141b39f4d8189c13d91fc1b37825ceead86988f879f3fa9351bbef96f8f2",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/lift.ts": "e4475a44a5618114f288025601b535bc04b97e9a37b3be21f51d3be092d419c8",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/load.ts": "c1d8ddb1b3b3c59afe30710a97ad6dd7ae1ecd59aa1d427a5eaf4552d3b1ea01",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/lower.ts": "916ef7476dc583783770f4c42de7a655350531b3763c81a92249cca96f5e4d80",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/memory.ts": "09728360d6413fb30a5a7bff1ba6abec1ac6474ff150d45f093b8ebe5e65cd51",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/mod.ts": "b79cf9e2bab2e837fee76fa61dc18bff66d941e08597f1b76de93811bd6d6008",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/store.ts": "97aaecfeb4dfbf5c3c132fb5eadf1f5677924936eee0c7fa75a266a00cd73634",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/strings.ts": "9589dda3857725792ae15ef6888449b48e973b9eb0f3058ed64e10bf4d39b793",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/trap.ts": "307d8b48806eeba30400b3d7db9370cee70a12298851c1c19053dd8ca0013e1c",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/types.ts": "d0392e8cdf2990a76c8a1f9b85795d3b7c19b8eb006c2b159b671d08c39b9535",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/cabi/values.ts": "9e6ddcc4192d05897b2cbea250db3fef0ad9bf6548ba87aff378ee14b7ab7022",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/casing.ts": "1e9083becfc08107c09015ce3db79c304b05c40085a3c899ea1c8ebe25fcd45f",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/errors.ts": "b0cac244526b92c052d165f2aee1d9492e5915a5a4cad114e1ab575ffe1587ba",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/imports.ts": "98cca003e4a1131c35854c91b458f109d6761a3e8f67c23730f7e9bc28bbad88",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/instantiate.ts": "2479c085a82adc20eb3e8e11832cad8daaa50992d383e8a38d73fbc7259f52e5",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/mod.ts": "0a4f42b8c569b528b4c3172c3394ad5f9ddafa33bcaf5eccd00e645e111da2b1",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/resources.ts": "d209e5f13545b9c0c095ac4e188b72370d97c9bd394ba7c8793ddd74f436b1ef",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/streams.ts": "4ef894a43da94b4cb01ee65798a108a8fb3f6b2dc6013c71881f63e0806df565",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/values.ts": "ed876f9103f4a4f34e8eb475934091156bee1447f5a029ea300644b8f3ee71eb",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/embedder/version.ts": "b1c589988e5fb88dce3a014846c9253399e286f12afb5fd92509c8d6090ad4bb",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/exec/boundary.ts": "8a162aefc3524ce1a72f294a95eadc92b66764de75bad84966301192a57ae92e",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/exec/executor.ts": "55044c381d842a9d0f17731d55b47b48023d3a9222806e4b0607b53615a1dc97",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/exec/host_streams.ts": "63f6b113806c401ae9895df82448da70a7745a97b6e2f04061fb5bc64e7d0acf",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/exec/mod.ts": "a46320977ece14342bcb72c9c9e36d65a1cd09d789591d0909d7d1185264010b",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/intrinsics/async_builtins.ts": "526795358da8908d54a483bb47eebc43e0a1ea59e69ece94d0c6890ad0fa8784",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/intrinsics/context.ts": "be93b23d127ff71d5c372781f89d1c3746c5d32a44e67ebbcd91f2b0f0807e93",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/intrinsics/errors.ts": "9d09fc1818b4dc98b238aa69008a9110d9d305b6a8e806604f3bd48fca1eebcb",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/intrinsics/fact_calls.ts": "aa0b0aef81b59cdcd8dc572c20e1f57a8f5592f75a0d5d666032851df9201229",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/intrinsics/mod.ts": "f9c095e561f5fbb51f70693b21f272f66241f2e8ff2e1a83cd4176bcd0104eb9",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/intrinsics/stream_builtins.ts": "bbc1e1ea0e4616026a46d790a68695aa70589a88b08a6275acdb525f0ab531ec",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/intrinsics/transcode.ts": "e3fcaeb7a60b6cbad999d9389d4bce59e305e6f54e035ba791f909e10d1f82c7",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/jspi/bridge.ts": "7cf3706d3bf34b503aea516a31918a8d930aba3dac7e94ec04caecd23fe6025e",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/jspi/mechanics.ts": "dc0fe4965b3ef8c0aff6674afd8bae2a38942ab934fa07fd2eb7db72b2462f17",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/jspi/mod.ts": "4d047b820b50c410ed946c62dc48286f8abe4787ce6ae5466cd0ae255d98943c",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/jspi/types.ts": "86929224733a764a148ac75a9d6b95d61ab4c8123a48fe956d998e97726a1432",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/plan/format.ts": "90e31bbc7137c2f80c0782e1431afb6f81827aab8d38dba1178b8761f1b3ea0a",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/plan/loader.ts": "107db77e724a7f74f161a5fd20e7110a6e6f182c46f18282eba650bc887dc876",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/shim/mod.ts": "34af2240dfd0be720def487db2db34eaad6ba9178003f20e2193d03a0632779b",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/shim/translator.ts": "7ea1a4101363ee62ddedb9d6c3f798fd6042886ef38ee13046ac3cdb9485bf24",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/task/mod.ts": "5decca8045dfd9743910e83d512258a7be3b0d0917954b8d9cdbac38e03f7dfb",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/task/scheduler.ts": "18a4404f620407bd867876115861ee0cf98f6f1ccd41c5f3c877ef90e429ef9c",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/task/streams.ts": "83b522a6393ba06fbdb87881bc6761f3fce9c03b85e9eda03d3befe7d2605a60",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/task/subtask.ts": "750b13a1318f62836bfd149f1b9144de5b017fd7a84adc8e2fb2151e63130fbc",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/task/thread.ts": "81fe38b37a1ec130803b478a24e428b19ee4e1ef8c0bae741395cd8d52751580",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/runtime/src/task/waitable.ts": "5e1fc092e3d8f1fb4429d6a91d8886b3e474aa9ac6254e7924fd896c4929e1f9",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/tools/release-bundle/entry.ts": "2b6a277d426c5930b79e120bb792506329cc2603e54a8e50a27cb7b76e39e2fa",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/wasi-shims/src/cli.ts": "d1617e12dc2569f4ee107f8b92488797daf431d14b8a86a1ab10750a28757394",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/wasi-shims/src/clocks.ts": "05468a822b635408ce3a671b40fd06fd4448c220019f9449bf029ac1c7e59664",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/wasi-shims/src/filesystem.ts": "6dcead5346d78084c3923410e44875e678f3b58db0c2d59513339b428596ec25",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/wasi-shims/src/io.ts": "dfe270e5ad3388c02696e27a5c69c58a411759fe8c99416361b0ac10177366da",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/wasi-shims/src/mod.ts": "1748985cf851252e1755aafd9ebb9c7ae96003ec41322d9524a952062d2b8570",
-    "https://raw.githubusercontent.com/lann/deltic/pre-10cc776/wasi-shims/src/random.ts": "dc04d20de5399cc7fa8685a04ec954618e3994a374ef94535fff408a745425e2"
-  },
   "workspace": {
     "dependencies": [
+      "jsr:@polyengine/protocol@~0.3.1",
       "npm:node-datachannel@0.32.3",
       "npm:werift@0.22.2"
-    ],
-    "packageJson": {
-      "dependencies": [
-        "npm:playwright-core@^1.61.1"
-      ]
-    }
+    ]
   }
 }

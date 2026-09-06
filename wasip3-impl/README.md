@@ -7,7 +7,7 @@ so it can be composed (`wac plug`) with any consumer component that imports
 `connections`.
 
 This is the third implementation alongside the [`wasmtime-impl`](../wasmtime-impl)
-(webrtc-rs) and [`deltic-impl`](../deltic-impl) (JS engines/browser) hosts. Unlike those two —
+(webrtc-rs) and [`polyengine-impl`](../polyengine-impl) (JS engines/browser) hosts. Unlike those two —
 which run the fully async `webrtc-rs` engine *host-side* — this one is itself a
 component: it drives the *sans-I/O* `rtc` stack, where protocol logic is
 separated from I/O, over `wasi:sockets` UDP and `wasi:clocks` timers, entirely

@@ -38,19 +38,19 @@ conformance-build:
     @just gha::_step conformance::build
     @just gha::_step conformance::_ct-tools
 
-# The loopback targets (wasmtime, composed, deltic-deno, deltic-browser)
+# The loopback targets (wasmtime, composed, polyengine-deno, polyengine-browser)
 # and the interop directions, aggregated against both committed
 # lockfiles, then gated against both committed matrices. In CI the
 # artifacts arrive prebuilt from the build job; locally
-# `just gha::conformance-build` produces them. deltic-check needs only
+# `just gha::conformance-build` produces them. polyengine-check needs only
 # Deno + network, so it rides this job too.
 conformance-matrix:
     @just gha::_step conformance::lock-check
-    @just gha::_step deltic-check
+    @just gha::_step polyengine-check
     @just gha::_step conformance::run-wasmtime
     @just gha::_step conformance::run-composed
-    @just gha::_step conformance::run-deltic
-    @just gha::_step conformance::run-deltic-browser
+    @just gha::_step conformance::run-polyengine
+    @just gha::_step conformance::run-polyengine-browser
     @just gha::_step conformance::run-interop
     @just gha::_step conformance::aggregate
     @just gha::_step conformance::matrix-check

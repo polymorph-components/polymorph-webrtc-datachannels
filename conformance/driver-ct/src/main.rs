@@ -29,7 +29,7 @@ use orchestrate::PeerKind;
 const USAGE: &str = "usage: rtc-ct-driver exec <suite.wasm> [--jsonl] [--select prefix] \
      [--role offerer|answerer --signaling url --run-id id] [--composed] \
      [--suite-artifact path] [--jobs n] [--budget secs] [--case-timeout secs]
-        rtc-ct-driver loopback <suite.wasm> --target name --kind wasmtime|composed|deltic-deno|deltic-browser \
+        rtc-ct-driver loopback <suite.wasm> --target name --kind wasmtime|composed|polyengine-deno|polyengine-browser \
      [--artifact path] [--script path] [-o out.jsonl]
         rtc-ct-driver interop <pair-suite.wasm> --direction <offerer>-x-<answerer> \
      [--composed-pair path] [--deno-script path] [--browser-script path] \
@@ -186,16 +186,16 @@ fn loopback_cmd(argv: Vec<String>) -> Result<ExitCode> {
             composed: true,
             suite_artifact: Some(suite.clone()),
         },
-        "deltic-deno" => PeerKind::Deno {
+        "polyengine-deno" => PeerKind::Deno {
             script: script
                 .clone()
-                .context("--kind deltic-deno needs --script")?,
+                .context("--kind polyengine-deno needs --script")?,
             args: Vec::new(),
         },
-        "deltic-browser" => PeerKind::Node {
+        "polyengine-browser" => PeerKind::Node {
             script: script
                 .clone()
-                .context("--kind deltic-browser needs --script")?,
+                .context("--kind polyengine-browser needs --script")?,
             args: Vec::new(),
         },
         other => bail!("unknown --kind {other:?}"),
@@ -273,16 +273,16 @@ fn interop_cmd(argv: Vec<String>) -> Result<ExitCode> {
                 composed: true,
                 suite_artifact: Some(suite.clone()),
             },
-            "deltic-deno" => PeerKind::Deno {
+            "polyengine-deno" => PeerKind::Deno {
                 script: deno_script
                     .clone()
-                    .context("direction includes deltic-deno: needs --deno-script")?,
+                    .context("direction includes polyengine-deno: needs --deno-script")?,
                 args: pair_suite_args(&suite, PairSuitePath::Filesystem)?,
             },
-            "deltic-browser" => PeerKind::Node {
+            "polyengine-browser" => PeerKind::Node {
                 script: browser_script
                     .clone()
-                    .context("direction includes deltic-browser: needs --browser-script")?,
+                    .context("direction includes polyengine-browser: needs --browser-script")?,
                 args: pair_suite_args(&suite, PairSuitePath::Served)?,
             },
             "reference" => PeerKind::Reference {
@@ -433,7 +433,7 @@ enum PairSuitePath {
     Served,
 }
 
-/// The deltic children's pair-artifact selection (the interop matrix runs
+/// The polyengine children's pair-artifact selection (the interop matrix runs
 /// the pair-only suite; the loopback legs run the full one — the children
 /// default to it and take `--suite`/`--name` overrides).
 fn pair_suite_args(suite: &std::path::Path, form: PairSuitePath) -> Result<Vec<String>> {
