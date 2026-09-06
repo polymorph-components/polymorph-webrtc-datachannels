@@ -32,24 +32,17 @@ default-members = [
 resolver = "2"
 
 # Pin the WebRTC stack once, here, so every member (and any future wasm build)
-# resolves the same source. The pins are one git rev rather than crates.io
-# versions because they carry a fix in no published release: `rtc-sctp`
-# discarded received-but-undelivered messages on an incoming stream reset
-# (https://github.com/lann/rtc/pull/1, rev 89f518ea4bba; the receive-side data
-# loss of
-# https://github.com/polymorph-components/polymorph-webrtc-datachannels/issues/125).
-# `webrtc` (the async driver, backing the native wasmtime host) consumes `rtc`
-# (the sans-I/O core, run in-guest by wasip3-impl) as an in-repo submodule
-# path dependency, which no version requirement or `[patch]` can redirect — so
-# both crates resolve from one `lann/webrtc` branch whose only delta from
-# upstream master (version 0.21.0, unreleased) is that submodule pointed at
-# the fixed rev: the direct `rtc` dependency and the host's transitive
-# `rtc-sctp` are then the same package, from the same source. Return to plain
-# crates.io versions once releases including the fix ship
-# (https://github.com/polymorph-components/polymorph-webrtc-datachannels/issues/120).
+# resolves the same source: `webrtc` (the async driver, backing the native
+# wasmtime host) and `rtc` (the sans-I/O core, run in-guest by wasip3-impl)
+# are released in lockstep from one upstream tree, and `webrtc` depends on the
+# exact `rtc` version it shipped with, so the two must agree. Exact pins
+# because 0.21.0 is still in pre-release: an `rc` tolerates no wildcard, and
+# behaviour the conformance suite asserts (the RFC 6525 drain-before-reset of
+# webrtc-rs/rtc#200, the srflx source-address check of webrtc-rs/rtc#136)
+# entered the series only in the release candidates.
 [workspace.dependencies]
-rtc = { git = "https://github.com/lann/webrtc.git", rev = "15755c6b99458ea5a4fe84af0e0bc773956860d2" }
-webrtc = { git = "https://github.com/lann/webrtc.git", rev = "15755c6b99458ea5a4fe84af0e0bc773956860d2" }
+rtc = "=0.21.0-rc.2"
+webrtc = "=0.21.0-rc.2"
 # The component-test harness arrives two ways, both naming one release:
 # the crates here are rev-pinned (no registry release yet), and the JS
 # runner core is jsr:@polymorph/test's npm-compat package

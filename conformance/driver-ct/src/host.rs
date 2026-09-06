@@ -114,9 +114,7 @@ pub fn make_data(env: &SuiteEnv) -> Data {
     let mut webrtc = WebrtcCtx::new();
     match &env.ice {
         None => {
-            webrtc.set_setting_engine_hook(|engine| {
-                engine.set_include_loopback_candidate(true);
-            });
+            webrtc.set_setting_engine_hook(|engine| engine.with_include_loopback_candidate(true));
         }
         // Lab peers connect over real interface addresses: loopback
         // candidates are not forced (a never-connectable pair), and
@@ -144,7 +142,7 @@ pub fn make_data(env: &SuiteEnv) -> Data {
             });
             if ice.disable_mdns {
                 webrtc.set_setting_engine_hook(|engine| {
-                    engine.set_multicast_dns_mode(rtc::ice::mdns::MulticastDnsMode::Disabled);
+                    engine.with_multicast_dns_mode(rtc::ice::mdns::MulticastDnsMode::Disabled)
                 });
             }
         }

@@ -108,7 +108,7 @@ impl SansIoPeer {
     /// the local peer's current channels.
     pub fn create_offer(&mut self) -> Result<String> {
         let offer = self.pc.create_offer(None)?;
-        self.pc.set_local_description(offer)?;
+        self.pc.set_local_description(Instant::now(), offer)?;
         local_sdp(&self.pc)
     }
 
@@ -117,14 +117,14 @@ impl SansIoPeer {
     /// `webrtc-rs` hosts) needs no separate candidate exchange.
     pub fn set_remote_offer(&mut self, sdp: String) -> Result<()> {
         self.pc
-            .set_remote_description(RTCSessionDescription::offer(sdp)?)?;
+            .set_remote_description(Instant::now(), RTCSessionDescription::offer(sdp)?)?;
         Ok(())
     }
 
     /// Apply the remote peer's SDP answer.
     pub fn set_remote_answer(&mut self, sdp: String) -> Result<()> {
         self.pc
-            .set_remote_description(RTCSessionDescription::answer(sdp)?)?;
+            .set_remote_description(Instant::now(), RTCSessionDescription::answer(sdp)?)?;
         Ok(())
     }
 
@@ -132,7 +132,7 @@ impl SansIoPeer {
     /// to a previously applied remote offer.
     pub fn create_answer(&mut self) -> Result<String> {
         let answer = self.pc.create_answer(None)?;
-        self.pc.set_local_description(answer)?;
+        self.pc.set_local_description(Instant::now(), answer)?;
         local_sdp(&self.pc)
     }
 
@@ -236,7 +236,7 @@ impl SansIoPeer {
             }
         }
         while let Some(message) = self.pc.poll_read() {
-            if let RTCMessage::DataChannelMessage(id, msg) = message {
+            if let RTCMessage::DataChannelMessage(id, msg) = message.message {
                 events.push(PeerEvent::Message {
                     id,
                     text: msg.is_string,
@@ -253,7 +253,7 @@ impl SansIoPeer {
             .pc
             .data_channel(id)
             .ok_or_else(|| anyhow!("no data channel with id {id:?}"))?;
-        dc.send_text(text)?;
+        dc.send_text(Instant::now(), text)?;
         Ok(())
     }
 
@@ -263,7 +263,7 @@ impl SansIoPeer {
             .pc
             .data_channel(id)
             .ok_or_else(|| anyhow!("no data channel with id {id:?}"))?;
-        dc.send(BytesMut::from(data))?;
+        dc.send(Instant::now(), BytesMut::from(data))?;
         Ok(())
     }
 
@@ -294,7 +294,7 @@ fn build_pc() -> Result<RTCPeerConnection> {
     let config = RTCConfigurationBuilder::new().build();
     Ok(RTCPeerConnectionBuilder::new()
         .with_configuration(config)
-        .build()?)
+        .build(Instant::now())?)
 }
 
 /// Read back the complete local description SDP.

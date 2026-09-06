@@ -45,11 +45,12 @@ pub use peer_connection::PeerConnection;
 use std::sync::Arc;
 
 use wasmtime::component::{HasData, Linker, ResourceTable};
-use webrtc::peer_connection::SettingEngine;
+use webrtc::peer_connection::SettingEngineBuilder;
 
-/// A hook run against a fresh [`SettingEngine`] before each peer connection is
-/// created. See [`WebrtcCtx::set_setting_engine_hook`].
-pub type SettingEngineHook = Arc<dyn Fn(&mut SettingEngine) + Send + Sync>;
+/// A hook run against a fresh [`SettingEngineBuilder`] before each peer
+/// connection is created. See [`WebrtcCtx::set_setting_engine_hook`].
+pub type SettingEngineHook =
+    Arc<dyn Fn(SettingEngineBuilder) -> SettingEngineBuilder + Send + Sync>;
 
 /// A STUN/TURN server a peer connection may gather server-reflexive and relay
 /// candidates from. Mirrors `webrtc-rs`'s `RTCIceServer`; `username`/`credential`
@@ -99,7 +100,7 @@ impl WebrtcIceConfig {
 /// `WasiHttpCtx`); it exists so hosts have a stable place to grow configuration
 /// without changing the [`WebrtcView`] shape.
 ///
-/// The knobs so far: the [`SettingEngine`] hook (see
+/// The knobs so far: the [`SettingEngineBuilder`] hook (see
 /// [`set_setting_engine_hook`](Self::set_setting_engine_hook)), the analogue
 /// of wasmtime-wasi-http's `WasiHttpHooks`; the [`WebrtcIceConfig`] ICE
 /// server configuration (see [`set_ice_config`](Self::set_ice_config)); the
@@ -147,8 +148,8 @@ impl WebrtcCtx {
         Self::default()
     }
 
-    /// Register a hook run against a fresh [`SettingEngine`] before each peer
-    /// connection this context creates.
+    /// Register a hook run against a fresh [`SettingEngineBuilder`] before
+    /// each peer connection this context creates.
     ///
     /// This is the customization point for `webrtc-rs` behavior the crate does
     /// not opt into itself (mirroring wasmtime-wasi-http's `WasiHttpHooks`). For
@@ -158,18 +159,16 @@ impl WebrtcCtx {
     /// ```
     /// # use wasmtime_webrtc_datachannels::WebrtcCtx;
     /// let mut ctx = WebrtcCtx::new();
-    /// ctx.set_setting_engine_hook(|engine| {
-    ///     engine.set_include_loopback_candidate(true);
-    /// });
+    /// ctx.set_setting_engine_hook(|engine| engine.with_include_loopback_candidate(true));
     /// ```
     pub fn set_setting_engine_hook(
         &mut self,
-        hook: impl Fn(&mut SettingEngine) + Send + Sync + 'static,
+        hook: impl Fn(SettingEngineBuilder) -> SettingEngineBuilder + Send + Sync + 'static,
     ) {
         self.setting_engine_hook = Some(Arc::new(hook));
     }
 
-    /// The registered [`SettingEngine`] hook, if any, cheaply cloned so callers
+    /// The registered [`SettingEngineBuilder`] hook, if any, cheaply cloned so callers
     /// can apply it without holding a borrow of the context.
     pub fn setting_engine_hook(&self) -> Option<SettingEngineHook> {
         self.setting_engine_hook.clone()

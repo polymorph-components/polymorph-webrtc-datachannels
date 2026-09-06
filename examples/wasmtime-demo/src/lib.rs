@@ -30,9 +30,7 @@ pub fn engine() -> Result<Engine> {
 pub fn webrtc_ctx() -> WebrtcCtx {
     let mut ctx = WebrtcCtx::new();
     if std::env::var_os("WEBRTC_INCLUDE_LOOPBACK").is_some() {
-        ctx.set_setting_engine_hook(|engine| {
-            engine.set_include_loopback_candidate(true);
-        });
+        ctx.set_setting_engine_hook(|engine| engine.with_include_loopback_candidate(true));
     }
     if let Some(bytes) = max_inbound_buffer_bytes_from_env() {
         ctx.set_max_inbound_buffer_bytes(bytes);

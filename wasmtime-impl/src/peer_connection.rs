@@ -40,7 +40,7 @@ use anyhow::{anyhow, Result};
 use webrtc::data_channel::DataChannel as WebrtcDataChannel;
 use webrtc::peer_connection::{
     PeerConnectionBuilder, PeerConnectionEventHandler, RTCConfigurationBuilder, RTCIceServer,
-    RTCIceTransportPolicy, SettingEngine,
+    RTCIceTransportPolicy, SettingEngineBuilder,
 };
 use webrtc::runtime::default_runtime;
 
@@ -218,7 +218,7 @@ pub struct PeerConnection {
 impl PeerConnection {
     /// Construct a peer connection, spawning the `webrtc-rs` build task.
     ///
-    /// `hook` customizes the [`SettingEngine`](webrtc::peer_connection::SettingEngine)
+    /// `hook` customizes the [`SettingEngineBuilder`](webrtc::peer_connection::SettingEngineBuilder)
     /// before the connection is built, and `ice` (bind addresses, STUN/TURN
     /// servers, relay-only policy) is applied when it is built.
     /// `connect_timeout` bounds `wait-connected` and
@@ -260,10 +260,9 @@ impl PeerConnection {
                     phase.clone(),
                 );
                 match new_peer_connection_with(
-                    |engine| {
-                        if let Some(hook) = &hook {
-                            hook(engine);
-                        }
+                    |engine| match &hook {
+                        Some(hook) => hook(engine),
+                        None => engine,
                     },
                     ice,
                     handler,
@@ -681,7 +680,7 @@ fn close_peer_connections(connections: Vec<Arc<dyn WebrtcPeerConnection>>) {
 /// Create a peer connection with an explicit [`WebrtcIceConfig`](crate::WebrtcIceConfig)
 /// controlling the UDP bind addresses, STUN/TURN servers, and ICE transport
 /// policy, giving the caller a chance to customize the `webrtc-rs`
-/// [`SettingEngine`] first and supplying the event `handler` that receives its
+/// [`SettingEngineBuilder`] first and supplying the event `handler` that receives its
 /// callbacks (the `webrtc` 0.21 builder takes a single
 /// [`PeerConnectionEventHandler`] at build time). A default config binds IPv4
 /// loopback; the conformance netns lab (see `conformance/README.md`) overrides
@@ -702,12 +701,11 @@ fn close_peer_connections(connections: Vec<Arc<dyn WebrtcPeerConnection>>) {
 const DRIVER_REACTOR_POOL_SIZE: usize = 2;
 
 async fn new_peer_connection_with(
-    configure: impl FnOnce(&mut SettingEngine),
+    configure: impl FnOnce(SettingEngineBuilder) -> SettingEngineBuilder,
     ice: crate::WebrtcIceConfig,
     handler: Arc<dyn PeerConnectionEventHandler>,
 ) -> Result<Arc<dyn WebrtcPeerConnection>> {
-    let mut setting = SettingEngine::default();
-    configure(&mut setting);
+    let setting = configure(SettingEngineBuilder::new()).build();
     let runtime = default_runtime().ok_or_else(|| anyhow!("no async runtime found"))?;
 
     // Bind the scenario-specified interface addresses, or the crate default.
