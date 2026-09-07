@@ -13,12 +13,12 @@ crate-type = ["cdylib"]
 [dependencies]
 # The async `wasi:http` outgoing client (`wasip3::http::client::send`) plus the
 # `http-compat` bridge to the idiomatic `http` types.
-wasip3 = { version = "0.7", features = ["async-spawn", "http-compat"] }
+wasip3 = { version = "0.8", features = ["async-spawn", "http-compat"] }
 # The exported `mailbox` bindings.
 # Pinned to the wit-bindgen version the `wasip3` crate uses: this crate shares
 # wit-bindgen runtime types with wasip3, and mixing two runtime versions in one
 # component is unsupported. Upgrade together with the wasip3 dependency.
-wit-bindgen = { version = "0.57", features = ["async", "async-spawn"] }
+wit-bindgen = { version = "0.61", features = ["async", "async-spawn"] }
 http = "1"
 http-body-util = "0.1"
 bytes = "1"

@@ -84,10 +84,10 @@ impl RunningServer {
 fn router_with(state: AppState) -> Router {
     Router::new()
         .route("/healthz", get(healthz))
-        .route("/rooms/:room/:role", post(publish))
-        .route("/rooms/:room/:role", get(fetch))
-        .route("/rooms/:room/:role/done", post(mark_done))
-        .route("/rooms/:room", delete(delete_room))
+        .route("/rooms/{room}/{role}", post(publish))
+        .route("/rooms/{room}/{role}", get(fetch))
+        .route("/rooms/{room}/{role}/done", post(mark_done))
+        .route("/rooms/{room}", delete(delete_room))
         .with_state(state)
 }
 

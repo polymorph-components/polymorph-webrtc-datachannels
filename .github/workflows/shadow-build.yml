@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       # Build Shadow into a staging prefix (bin/shadow + lib/libshadow_*.so).
       # scripts/build-shadow.sh pins the revision and installs the build deps.

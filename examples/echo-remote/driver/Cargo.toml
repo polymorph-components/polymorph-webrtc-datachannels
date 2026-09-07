@@ -13,9 +13,9 @@ crate-type = ["cdylib"]
 [dependencies]
 # The async `wasi:cli/run` export (a synchronous `run` cannot await the async
 # `run` import).
-wasip3 = { version = "0.7", features = ["async-spawn"] }
+wasip3 = { version = "0.8", features = ["async-spawn"] }
 # The imported `remote` bindings.
 # Pinned to the wit-bindgen version the `wasip3` crate uses: this crate shares
 # wit-bindgen runtime types with wasip3, and mixing two runtime versions in one
 # component is unsupported. Upgrade together with the wasip3 dependency.
-wit-bindgen = { version = "0.57", features = ["async", "async-spawn"] }
+wit-bindgen = { version = "0.61", features = ["async", "async-spawn"] }

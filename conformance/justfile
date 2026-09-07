@@ -122,13 +122,19 @@ run-polyengine: _results-dir polyengine-deps
         -o {{results}}/polyengine-deno.jsonl
 
 # The polyengine browser driver's npm tree (the upstream page driver +
-# playwright-core; no transpiler).
+# playwright-core; no transpiler). It shares node_modules with the Deno
+# tree `polyengine-deps` materializes, and `npm ci` empties the directory
+# before installing — so the Deno tree is re-materialized right after,
+# here, rather than through a `polyengine-deps` dependency (just runs
+# each dependency at most once per invocation, so one that already ran
+# earlier in the same run would not run again after the wipe).
 _polyengine-browser-prepared:
     #!/usr/bin/env bash
     set -euo pipefail
     cd {{polyengine}}
     if [ package-lock.json -nt node_modules/.package-lock.json ]; then
         npm ci --no-audit --no-fund
+        deno install --frozen --allow-scripts=npm:node-datachannel
     fi
 
 # The polyengine browser leg's runtime inputs: the pinned translator +

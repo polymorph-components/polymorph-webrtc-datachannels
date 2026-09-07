@@ -11,12 +11,12 @@ crate-type = ["cdylib"]
 # The async `wasi:cli/run` export plus `wasi:cli@0.3` stdio for progress output.
 # A synchronous `run` cannot await the async `connections` imports, so this is a
 # `cdylib` exporting an async `run` (see the starter's OUTLINE.md).
-wasip3 = { version = "0.7", features = ["async-spawn"] }
+wasip3 = { version = "0.8", features = ["async-spawn"] }
 # The `connections` import bindings. Composed away by `wac plug` against the
 # provider; until then it is an unsatisfied import.
 # Pinned to the wit-bindgen version the `wasip3` crate uses: this crate shares
 # wit-bindgen runtime types with wasip3, and mixing two runtime versions in one
 # component is unsupported. Upgrade together with the wasip3 dependency.
-wit-bindgen = { version = "0.57", features = ["async", "async-spawn"] }
+wit-bindgen = { version = "0.61", features = ["async", "async-spawn"] }
 futures = { version = "0.3", default-features = false, features = ["async-await", "std"] }
 anyhow = "1"
