@@ -1,6 +1,6 @@
 {
   "name": "@polymorph/webrtc-datachannels",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "license": "Apache-2.0",
   "exports": "./src/webrtc.ts",
   "//": "MODULE-IDENTITY CONSTRAINT (A22): this package is a host module and MUST NOT import @polyengine/runtime (published host modules couple only to @polyengine/protocol, whose copies are harmless by construction — the module-identity story that used to require matching this package's runtime pin against conformance/driver-ct/polyengine/deno.json and its browser/ sibling no longer applies here). This config depends on @polyengine/protocol via a caret range (published dependency constraints must be ranges); the pin gate (`just polyengine-check`) asserts one RESOLVED @polyengine/protocol version across all three repo deno.locks, one RESOLVED @polyengine/runtime version across the two driver configs that still load the embedder, and that this package's deno.json/deno.lock name no @polyengine/runtime specifier at all. The lock carries integrity and --frozen enforces it.",
@@ -8,8 +8,8 @@
   "minimumDependencyAge": { "age": "P1D", "exclude": ["jsr:@polyengine/*"] },
   "imports": {
     "@polyengine/protocol": "jsr:@polyengine/protocol@^0.3.1",
-    "node-datachannel": "npm:node-datachannel@0.33.2",
-    "node-datachannel/polyfill": "npm:node-datachannel@0.33.2/polyfill",
+    "node-datachannel": "npm:node-datachannel@0.32.3",
+    "node-datachannel/polyfill": "npm:node-datachannel@0.32.3/polyfill",
     "werift": "npm:werift@0.24.4"
   },
   "publish": {

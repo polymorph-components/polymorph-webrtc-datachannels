@@ -26,6 +26,17 @@ this directory; the addon's install script needs the explicit grant).
 [`werift`](https://www.npmjs.com/package/werift) backend (no native
 code); the conformance matrix runs the default backend only.
 
+`node-datachannel` is held at 0.32.3 (libdatachannel 0.24.2). The 0.33.x
+line bundles libdatachannel 0.24.3, which buffers a DTLS ClientHello that
+arrives before the receiving peer has applied the answer
+([libdatachannel#1554](https://github.com/paullouisageneau/libdatachannel/pull/1554))
+and replays it inside `DtlsTransport::start()`, where an unlocked
+`BIO_write` races the initial `SSL_do_handshake`: 1–2% of connections
+fail with `Handshake failed: fatal I/O error`. The lock fix
+([libdatachannel#1584](https://github.com/paullouisageneau/libdatachannel/pull/1584))
+shipped in libdatachannel 0.24.4; move to the first node-datachannel
+release that bundles 0.24.4 or later.
+
 ## Checks
 
 ```sh
