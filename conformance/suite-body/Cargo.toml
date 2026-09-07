@@ -12,7 +12,7 @@ crate-type = ["rlib"]
 # The sut-imports world's bindings (imports `connections` + `mailbox`;
 # no exports — the suite crates' component-test SDK owns those): `async`
 # pulls in the component-model stream/future runtime.
-wit-bindgen = { version = "0.59", features = ["async", "async-spawn"] }
+wit-bindgen = { version = "0.61", features = ["async", "async-spawn"] }
 # Concurrent send/receive within a single cooperative task (no OS threads).
 futures = { version = "0.3", default-features = false, features = ["async-await"] }
 # The opaque signaling blob encoding the guest owns (JSON session-description /

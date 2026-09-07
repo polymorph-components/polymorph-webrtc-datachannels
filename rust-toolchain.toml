@@ -2,7 +2,7 @@
 # Pin the Rust toolchain so CI and contributors build with the exact same
 # compiler, and so the wasm targets the guest components need are always
 # available. Bump this deliberately rather than tracking floating `stable`.
-channel = "1.97.0"
+channel = "1.98.1"
 components = ["rustfmt", "clippy"]
 targets = [
     # echo-demo + the manual-signaling test guest

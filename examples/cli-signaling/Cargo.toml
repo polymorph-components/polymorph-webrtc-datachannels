@@ -11,13 +11,13 @@ crate-type = ["cdylib"]
 # `wasip3` provides the async `wasi:cli/run` export and the `wasi:cli@0.3.0`
 # stdio imports (`stdin::read-via-stream` / `stdout::write-via-stream`) used to
 # prompt the user for the offer/answer blobs.
-wasip3 = { version = "0.7", features = ["async-spawn"] }
+wasip3 = { version = "0.8", features = ["async-spawn"] }
 # `wit-bindgen` generates the guest bindings for the imported
 # `polymorph:webrtc-datachannels/manual-signaling` interface.
 # Pinned to the wit-bindgen version the `wasip3` crate uses: this crate shares
 # wit-bindgen runtime types with wasip3, and mixing two runtime versions in one
 # component is unsupported. Upgrade together with the wasip3 dependency.
-wit-bindgen = { version = "0.57", features = ["async", "async-spawn"] }
+wit-bindgen = { version = "0.61", features = ["async", "async-spawn"] }
 futures = { version = "0.3", default-features = false, features = ["async-await"] }
 # base64 keeps the copy/pasteable signaling blobs on a single line.
-base64 = "0.22"
+base64 = "0.23"

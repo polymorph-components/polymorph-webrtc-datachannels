@@ -10,8 +10,7 @@ use anyhow::Result;
 use component_test_runner::{CtCtx, RunnerView};
 use wasmtime::component::{Accessor, Linker, Resource, ResourceTable};
 use wasmtime_wasi::{WasiCtx, WasiCtxBuilder, WasiCtxView, WasiView};
-use wasmtime_wasi_http::p3::{WasiHttpCtxView, WasiHttpView};
-use wasmtime_wasi_http::WasiHttpCtx;
+use wasmtime_wasi_http::{WasiHttpCtx, WasiHttpCtxView, WasiHttpView};
 use wasmtime_webrtc_datachannels::{self as webrtc_host, WebrtcCtx, WebrtcCtxView, WebrtcView};
 
 mod bindings {
@@ -73,7 +72,7 @@ impl WebrtcView for Data {
 impl WasiHttpView for Data {
     fn http(&mut self) -> WasiHttpCtxView<'_> {
         WasiHttpCtxView {
-            hooks: wasmtime_wasi_http::p3::default_hooks(),
+            hooks: wasmtime_wasi_http::default_hooks(),
             ctx: &mut self.http,
             table: &mut self.table,
         }
@@ -164,7 +163,11 @@ pub fn make_data(env: &SuiteEnv) -> Data {
         wasi.env("RTC_CT_RUN_ID", id);
     }
     if env.composed {
-        wasi.inherit_network().allow_ip_name_lookup(true);
+        // `inherit_network` only lifts the address check; UDP itself is
+        // off by default and the in-guest provider's sockets need it.
+        wasi.inherit_network()
+            .allow_udp(true)
+            .allow_ip_name_lookup(true);
         // The in-guest provider binds (and derives its host candidate
         // from) this address; loopback default when unset.
         if let Some(ice) = &env.ice {

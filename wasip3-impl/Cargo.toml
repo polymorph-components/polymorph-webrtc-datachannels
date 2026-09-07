@@ -18,5 +18,5 @@ anyhow = "1"
 bytes = "1"
 # The async component-model bindings generator, driving the exported async
 # `connections` methods and the imported `wasi:sockets`/`wasi:clocks` calls.
-wit-bindgen = { version = "0.59", features = ["async", "async-spawn", "inter-task-wakeup"] }
+wit-bindgen = { version = "0.61", features = ["async", "async-spawn", "inter-task-wakeup"] }
 futures = { version = "0.3", default-features = false, features = ["async-await", "std"] }

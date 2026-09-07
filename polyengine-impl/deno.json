@@ -8,9 +8,9 @@
   "minimumDependencyAge": { "age": "P1D", "exclude": ["jsr:@polyengine/*"] },
   "imports": {
     "@polyengine/protocol": "jsr:@polyengine/protocol@^0.3.1",
-    "node-datachannel": "npm:node-datachannel@0.32.3",
-    "node-datachannel/polyfill": "npm:node-datachannel@0.32.3/polyfill",
-    "werift": "npm:werift@0.22.2"
+    "node-datachannel": "npm:node-datachannel@0.33.2",
+    "node-datachannel/polyfill": "npm:node-datachannel@0.33.2/polyfill",
+    "werift": "npm:werift@0.24.4"
   },
   "publish": {
     "exclude": ["tests"]

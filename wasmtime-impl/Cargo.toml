@@ -9,7 +9,7 @@ description = "Wasmtime host implementation of the polymorph:webrtc-datachannels
 # Wasmtime with component-model async (streams/futures) support. The
 # `component-model-async` feature gates the host `StreamReader`/`StreamProducer`
 # API used here.
-wasmtime = { version = "47", features = ["component-model", "component-model-async", "async", "runtime"] }
+wasmtime = { version = "48", features = ["component-model", "component-model-async", "async", "runtime"] }
 # `webrtc-rs`: a pure-Rust WebRTC stack. Provides the RTCPeerConnection /
 # RTCDataChannel implementation that backs the host's data channels. Pinned at
 # the workspace level (root Cargo.toml) alongside its sans-I/O `rtc` core.

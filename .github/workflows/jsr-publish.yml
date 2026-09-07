@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: "2.9.5"
+          deno-version: "2.9.6"
       - run: deno publish
         working-directory: polyengine-impl
       - name: Create the vX.Y.Z release

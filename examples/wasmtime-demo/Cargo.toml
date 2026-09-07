@@ -12,19 +12,19 @@ wasmtime-webrtc-datachannels = { path = "../../wasmtime-impl" }
 # Wasmtime with component-model async (streams/futures) support. The
 # `component-model-async` feature gates the `Config::wasm_component_model_async*`
 # switches and the host `StreamReader`/`StreamProducer` API used here.
-wasmtime = { version = "47", features = ["component-model", "component-model-async", "async", "cranelift", "runtime"] }
-wasmtime-wasi = { version = "47", features = ["p3"] }
+wasmtime = { version = "48", features = ["component-model", "component-model-async", "async", "cranelift", "runtime"] }
+wasmtime-wasi = { version = "48", features = ["p3"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
 futures = "0.3"
 anyhow = "1"
 env_logger = "0.11.11"
 # Native HTTP client backing the echo-remote binary's rendezvous host (plain
 # HTTP/1.1 long-poll against the local signaling server; no TLS needed).
-reqwest = { version = "0.12", default-features = false }
+reqwest = { version = "0.13", default-features = false }
 
 [dev-dependencies]
 # The integration test decodes the guest's base64 SDP blobs to recognize them.
-base64 = "0.22"
+base64 = "0.23"
 # The echo-remote integration test starts the signaling mailbox server
 # in-process on an ephemeral port.
 conformance-signalingd = { path = "../../conformance/signaling/server" }

@@ -12,8 +12,11 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
-libwebrtc = "0.3.42"
-reqwest = { version = "0.12", default-features = false }
+# Exact pin: from 0.3.43 the `webrtc-sys` build script requires clang 21+
+# (the hermetic libc++ bundled with that libwebrtc), which neither the CI
+# image nor a stock distro toolchain provides.
+libwebrtc = "=0.3.42"
+reqwest = { version = "0.13", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }

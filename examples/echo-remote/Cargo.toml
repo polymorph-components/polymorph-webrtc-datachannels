@@ -9,7 +9,7 @@ description = "One peer of a two-process WebRTC echo run: a component that conne
 crate-type = ["cdylib"]
 
 [dependencies]
-wit-bindgen = { version = "0.59", features = ["async"] }
+wit-bindgen = { version = "0.61", features = ["async"] }
 futures = { version = "0.3", default-features = false, features = ["async-await"] }
 # The opaque rendezvous blob encoding (JSON `Signal` values, the same schema
 # the conformance guest uses over its mailbox).

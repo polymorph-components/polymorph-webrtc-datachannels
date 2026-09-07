@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Install Rust toolchain
         # The toolchain version, wasm targets, and rustfmt/clippy components are
@@ -34,7 +34,7 @@ jobs:
         run: rustup show active-toolchain || rustup toolchain install
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           # Node 24+ for the polyengine browser page drivers (plain node, no
           # engine flag).
